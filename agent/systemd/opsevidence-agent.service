@@ -1,0 +1,34 @@
+[Unit]
+Description=OpsEvidence evidence agent (collect once)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=opsevidence
+Group=opsevidence
+ExecStart=/usr/local/bin/opsevidence-agent collect
+
+# El agente es read-only: no necesita escribir nada, no crea sockets de
+# escucha y no ejecuta comandos remotos. Estas directivas endurecen la unidad
+# para que, si el proceso se compromete, no pueda escalar.
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictRealtime=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target
