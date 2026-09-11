@@ -1,0 +1,53 @@
+# Entorno
+.env
+.env.*
+!.env.example
+!.env.testing.example
+
+# Estado local de la herramienta
+.commandcode/
+
+# Dependencias
+/vendor/
+/node_modules/
+backend/vendor/
+frontend/node_modules/
+
+# Build
+backend/public/build
+frontend/dist
+frontend/.vite
+*.tsbuildinfo
+
+# Estado de runtime
+backend/storage/*.key
+backend/storage/pail
+backend/bootstrap/cache/*.php
+!backend/bootstrap/cache/.gitignore
+
+# Base de datos local
+*.sqlite
+*.sqlite-journal
+
+# Agentes / Python
+agent/.venv/
+agent/venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Editores y sistema
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Reportes generados localmente
+/reports-output/
