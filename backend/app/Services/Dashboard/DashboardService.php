@@ -5,7 +5,7 @@ namespace App\Services\Dashboard;
 use App\Domain\Enums\AssetType;
 use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceStatus;
-use App\Domain\Enums\IncidentStatus;
+use App\Domain\Enums\IncidentSeverity;
 use App\Models\Asset;
 use App\Models\Check;
 use App\Models\Client;
@@ -49,7 +49,7 @@ class DashboardService
                 'failed' => $byStatus[EvidenceStatus::Failed->value] ?? 0,
                 'never_collected' => $neverCollected,
                 'open_incidents' => $openIncidents->count(),
-                'critical_incidents' => $openIncidents->where('severity', \App\Domain\Enums\IncidentSeverity::Critical)->count(),
+                'critical_incidents' => $openIncidents->where('severity', IncidentSeverity::Critical)->count(),
                 'failed_backups' => $this->countByTypeAndStatus($latest, CheckType::BackupStatus, EvidenceStatus::Critical),
                 'expiring_certificates' => $this->countByTypeAndStatus($latest, CheckType::SslExpiration, EvidenceStatus::Warning),
                 'pending_updates' => $this->serversWithPendingUpdates($latest),

@@ -8,6 +8,7 @@ use App\Domain\Enums\RuleKey;
 use App\Models\Account;
 use App\Models\Client;
 use App\Models\Incident;
+use App\Models\RuleSetting;
 use App\Services\Rules\IncidentManager;
 use App\Services\Rules\RulesEngine;
 
@@ -154,7 +155,7 @@ it('permite desactivar una regla por cuenta', function () {
 
     makeEvidence($asset, CheckType::DiskUsage, EvidenceStatus::Critical, ['value_numeric' => 99.0]);
 
-    \App\Models\RuleSetting::withoutGlobalScopes()->create([
+    RuleSetting::withoutGlobalScopes()->create([
         'account_id' => $account->id,
         'client_id' => null,
         'rule_key' => RuleKey::DiskUsage->value,

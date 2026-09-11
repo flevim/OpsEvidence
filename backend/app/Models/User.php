@@ -53,7 +53,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param array<int, UserRole>|UserRole $roles
+     * @param  array<int, UserRole>|UserRole  $roles
      */
     public function hasRole(UserRole|array $roles): bool
     {

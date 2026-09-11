@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\RunCheckJob;
 use App\Models\Check;
+use App\Services\Collectors\CollectorRegistry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,7 +39,7 @@ class DispatchChecksCommand extends Command
         $skipped = 0;
 
         foreach ($checks as $check) {
-            if (! app(\App\Services\Collectors\CollectorRegistry::class)->supports($check->type)) {
+            if (! app(CollectorRegistry::class)->supports($check->type)) {
                 $skipped++;
 
                 continue;

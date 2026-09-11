@@ -32,7 +32,7 @@ class EnsureTenantOwnership
                 $accountId = $parameter->getAttribute('account_id');
 
                 if ($accountId !== null && (int) $accountId !== (int) $user->account_id) {
-                    throw new NotFoundHttpException();
+                    throw new NotFoundHttpException;
                 }
             }
         }

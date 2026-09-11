@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceSource;
+use App\Domain\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
 use App\Jobs\EvaluateClientRulesJob;
 use App\Models\ApiToken;
 use App\Models\Asset;
 use App\Models\Client;
-use App\Models\Evidence;
 use App\Services\Evidence\EvidenceIngestor;
 use App\Services\Evidence\EvidenceNormalizer;
 use App\Services\Evidence\EvidencePayload;
 use App\Support\AccountContext;
+use Carbon\CarbonImmutable;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,8 +32,7 @@ class BackupWebhookController extends Controller
     public function __construct(
         private readonly EvidenceIngestor $ingestor,
         private readonly EvidenceNormalizer $normalizer,
-    ) {
-    }
+    ) {}
 
     public function store(Request $request, string $token): JsonResponse
     {
@@ -78,7 +78,7 @@ class BackupWebhookController extends Controller
                     ],
                     'raw_data' => $data,
                     'source' => EvidenceSource::Webhook,
-                    'collected_at' => isset($data['timestamp']) ? \Carbon\CarbonImmutable::parse($data['timestamp']) : null,
+                    'collected_at' => isset($data['timestamp']) ? CarbonImmutable::parse($data['timestamp']) : null,
                 ],
             );
 
@@ -104,7 +104,7 @@ class BackupWebhookController extends Controller
             throw new AuthenticationException('Token de webhook inválido.');
         }
 
-        if (! $apiToken->hasAbility(\App\Domain\Enums\TokenAbility::EvidenceWrite)) {
+        if (! $apiToken->hasAbility(TokenAbility::EvidenceWrite)) {
             throw new AuthenticationException('El token no puede registrar evidencia.');
         }
 

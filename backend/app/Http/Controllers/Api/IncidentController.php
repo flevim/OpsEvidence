@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Domain\Enums\IncidentSeverity;
 use App\Domain\Enums\IncidentStatus;
 use App\Http\Controllers\Api\Concerns\HandlesListQuery;
 use App\Http\Controllers\Controller;

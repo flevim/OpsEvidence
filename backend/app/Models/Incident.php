@@ -6,6 +6,7 @@ use App\Domain\Enums\IncidentSeverity;
 use App\Domain\Enums\IncidentStatus;
 use App\Domain\Enums\RuleKey;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\IncidentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Incident extends Model
 {
-    /** @use HasFactory<\Database\Factories\IncidentFactory> */
+    /** @use HasFactory<IncidentFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

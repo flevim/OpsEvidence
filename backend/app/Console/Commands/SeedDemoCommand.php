@@ -14,6 +14,7 @@ use App\Models\Client;
 use App\Models\User;
 use App\Support\AccountContext;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 /**
  * Datos de demostracion idempotentes.
@@ -115,12 +116,12 @@ class SeedDemoCommand extends Command
 
         foreach ($clients as $definition) {
             $client = Client::withoutGlobalScopes()->firstOrCreate(
-                ['account_id' => $account->id, 'slug' => \Illuminate\Support\Str::slug($definition['name'])],
+                ['account_id' => $account->id, 'slug' => Str::slug($definition['name'])],
                 [
                     'name' => $definition['name'],
                     'description' => $definition['description'],
                     'contact_name' => 'Contacto '.$definition['name'],
-                    'contact_email' => 'contacto@'.str_replace('.', '', \Illuminate\Support\Str::slug($definition['name'])).'.test',
+                    'contact_email' => 'contacto@'.str_replace('.', '', Str::slug($definition['name'])).'.test',
                     'active' => true,
                 ],
             );

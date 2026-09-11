@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Domain\Enums\ReportStatus;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Report extends Model
 {
-    /** @use HasFactory<\Database\Factories\ReportFactory> */
+    /** @use HasFactory<ReportFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

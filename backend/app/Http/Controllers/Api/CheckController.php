@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Domain\Enums\AssetType;
 use App\Domain\Enums\CheckType;
 use App\Http\Controllers\Controller;
 use App\Jobs\RunCheckJob;

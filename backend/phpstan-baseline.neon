@@ -1,0 +1,613 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/SeedDemoCommand.php
+
+		-
+			message: '#^Cannot call method suggestedCheckTypes\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Console/Commands/SeedDemoCommand.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ActivityController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ActivityController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Http/Controllers/Api/AgentEvidenceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/ApiTokenController.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Http/Controllers/Api/ApiTokenController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AssetController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AssetController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isActive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/AuthController.php
+
+		-
+			message: '#^Cannot call method isCollectedByPlatform\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/CheckController.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Http/Controllers/Api/CheckController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$client_limit\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ClientController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ClientController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$plan\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ClientController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:canAddClient\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ClientController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:clients\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/ClientController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/IntegrationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/IntegrationController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/IntegrationController.php
+
+		-
+			message: '#^Cannot call method isImplemented\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/IntegrationController.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/IntegrationController.php
+
+		-
+			message: '#^Cannot call method toDateString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/ReportController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Http/Controllers/Api/RuleSettingController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Resources/AccountResource.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Resources/AccountResource.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\ActivityFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Activity.php
+
+		-
+			message: '#^Type Database\\Factories\\ActivityFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\ActivityFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/Activity.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/ApiToken.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\ApiTokenFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/ApiToken.php
+
+		-
+			message: '#^Type Database\\Factories\\ApiTokenFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\ApiTokenFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/ApiToken.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$account_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/AuditLog.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\AuditLogFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/AuditLog.php
+
+		-
+			message: '#^Type Database\\Factories\\AuditLogFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\AuditLogFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/AuditLog.php
+
+		-
+			message: '#^Cannot call method copy\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Check.php
+
+		-
+			message: '#^Cannot call method getTimestampMs\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/CheckRun.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\CheckRunFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/CheckRun.php
+
+		-
+			message: '#^Type Database\\Factories\\CheckRunFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\CheckRunFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/CheckRun.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\DailySummaryFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/DailySummary.php
+
+		-
+			message: '#^Type Database\\Factories\\DailySummaryFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\DailySummaryFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/DailySummary.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\EnvironmentFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Environment.php
+
+		-
+			message: '#^Type Database\\Factories\\EnvironmentFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\EnvironmentFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/Environment.php
+
+		-
+			message: '#^Cannot call method diffInSeconds\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Incident.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\IntegrationFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Integration.php
+
+		-
+			message: '#^Type Database\\Factories\\IntegrationFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\IntegrationFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/Integration.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Models/Report.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\ReportFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/Report.php
+
+		-
+			message: '#^Type Database\\Factories\\ReportFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\ReportFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/Report.php
+
+		-
+			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\RuleSettingFactory\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Models/RuleSetting.php
+
+		-
+			message: '#^Type Database\\Factories\\RuleSettingFactory in generic type Illuminate\\Database\\Eloquent\\Factories\\HasFactory\<Database\\Factories\\RuleSettingFactory\> in PHPDoc tag @use is not subtype of template type TFactory of Illuminate\\Database\\Eloquent\\Factories\\Factory of trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/RuleSetting.php
+
+		-
+			message: '#^Cannot call method level\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Cannot call method canManageTokens\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Policies/ApiTokenPolicy.php
+
+		-
+			message: '#^Cannot call method canManageUsers\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Policies/UserPolicy.php
+
+		-
+			message: '#^Cannot call method canManageUsers\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: app/Services/Agent/AgentEvidenceNormalizer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>configuration" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Agent/AgentEvidenceNormalizer.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Collectors/CollectorRegistry.php
+
+		-
+			message: '#^Method App\\Services\\Collectors\\GithubWorkflowCollector\:\:tokenFor\(\) never returns string so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: app/Services/Collectors/GithubWorkflowCollector.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>credentials" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Collectors/GithubWorkflowCollector.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Collectors/HttpCheckCollector.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hostname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Collectors/HttpCheckCollector.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Collectors/HttpCheckCollector.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>address" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Collectors/HttpCheckCollector.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Collectors/SslCheckCollector.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$hostname\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Collectors/SslCheckCollector.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>address" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Collectors/SslCheckCollector.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Dashboard/DashboardService.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 5
+			path: app/Services/Dashboard/DashboardService.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: app/Services/Dashboard/DashboardService.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/Dashboard/DashboardService.php
+
+		-
+			message: '#^Cannot call method weight\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 3
+			path: app/Services/Dashboard/DashboardService.php
+
+		-
+			message: '#^Anonymous function should return App\\Domain\\Enums\\EvidenceStatus but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/Evidence/EvidenceIngestor.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 6
+			path: app/Services/Reporting/ReportBuilder.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: app/Services/Reporting/ReportBuilder.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 5
+			path: app/Services/Reporting/ReportBuilder.php
+
+		-
+			message: '#^Cannot call method weight\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Reporting/ReportBuilder.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: app/Services/Reporting/ReportMetricsCollector.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Reporting/ReportMetricsCollector.php
+
+		-
+			message: '#^Property App\\Models\\Incident\:\:\$metadata \(string\|null\) does not accept array\<mixed, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Services/Rules/IncidentManager.php
+
+		-
+			message: '#^Property App\\Models\\Incident\:\:\$severity \(string\) does not accept App\\Domain\\Enums\\IncidentSeverity\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Services/Rules/IncidentManager.php
+
+		-
+			message: '#^Property App\\Models\\Incident\:\:\$status \(string\) does not accept App\\Domain\\Enums\\IncidentStatus\:\:Open\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Services/Rules/IncidentManager.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/BackupFailedRule.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Rules/Rules/BackupStaleRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/CollectorFailingRule.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: app/Services/Rules/Rules/ContainerDownRule.php
+
+		-
+			message: '#^Offset ''name'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Rules/Rules/ContainerDownRule.php
+
+		-
+			message: '#^Offset ''state'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Rules/Rules/ContainerDownRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/ContainerDownRule.php
+
+		-
+			message: '#^Empty array passed to foreach\.$#'
+			identifier: foreach.emptyArray
+			count: 1
+			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
+
+		-
+			message: '#^Offset ''health'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
+
+		-
+			message: '#^Offset ''name'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
+
+		-
+			message: '#^Comparison operation "\>\=" between \*NEVER\* and int results in an error\.$#'
+			identifier: greaterOrEqual.invalid
+			count: 1
+			path: app/Services/Rules/Rules/PendingSecurityUpdatesRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/PendingSecurityUpdatesRule.php
+
+		-
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Rules/Rules/ServerUnreachableRule.php
+
+		-
+			message: '#^Cannot call method weight\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/Rules/Rules/SslExpiringRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/SslExpiringRule.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/Rules/Rules/WebsiteDownRule.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/Rules/RulesEngine.php

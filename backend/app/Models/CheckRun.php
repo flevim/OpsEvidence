@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Enums\CheckRunStatus;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\CheckRunFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CheckRun extends Model
 {
-    /** @use HasFactory<\Database\Factories\CheckRunFactory> */
+    /** @use HasFactory<CheckRunFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

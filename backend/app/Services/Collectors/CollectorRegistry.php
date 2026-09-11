@@ -26,9 +26,7 @@ class CollectorRegistry
     /** @var array<string, Collector>|null */
     private ?array $resolved = null;
 
-    public function __construct(private readonly Container $container)
-    {
-    }
+    public function __construct(private readonly Container $container) {}
 
     public function for(CheckType $type): ?Collector
     {

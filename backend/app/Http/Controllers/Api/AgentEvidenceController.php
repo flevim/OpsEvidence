@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Domain\Enums\CheckType;
 use App\Http\Controllers\Controller;
 use App\Jobs\EvaluateClientRulesJob;
+use App\Models\ApiToken;
 use App\Models\Asset;
 use App\Models\Check;
 use App\Models\Client;
@@ -12,11 +13,11 @@ use App\Models\Evidence;
 use App\Services\Agent\AgentEvidenceNormalizer;
 use App\Services\Agent\AgentTokenAuthenticator;
 use App\Services\Evidence\EvidenceIngestor;
-use App\Services\Evidence\EvidencePayload;
 use App\Support\AccountContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -26,8 +27,7 @@ class AgentEvidenceController extends Controller
         private readonly AgentTokenAuthenticator $authenticator,
         private readonly AgentEvidenceNormalizer $normalizer,
         private readonly EvidenceIngestor $ingestor,
-    ) {
-    }
+    ) {}
 
     public function store(Request $request): JsonResponse
     {
@@ -102,7 +102,7 @@ class AgentEvidenceController extends Controller
     /**
      * @param  array<string, mixed>  $data
      */
-    private function resolveClient(\App\Models\ApiToken $token, array $data): Client
+    private function resolveClient(ApiToken $token, array $data): Client
     {
         if ($token->client_id !== null) {
             return Client::withoutGlobalScopes()->findOrFail($token->client_id);
@@ -129,7 +129,7 @@ class AgentEvidenceController extends Controller
     /**
      * @param  array<string, mixed>  $data
      */
-    private function resolveAsset(\App\Models\ApiToken $token, Client $client, array $data): Asset
+    private function resolveAsset(ApiToken $token, Client $client, array $data): Asset
     {
         if ($token->asset_id !== null) {
             return Asset::withoutGlobalScopes()->findOrFail($token->asset_id);
@@ -156,10 +156,10 @@ class AgentEvidenceController extends Controller
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<string, Check>  $checks
+     * @param  Collection<string, Check>  $checks
      * @param  array<int, Evidence>  $stored
      */
-    private function updateMatchingChecks(\Illuminate\Support\Collection $checks, array $stored, CarbonImmutable $collectedAt): void
+    private function updateMatchingChecks(Collection $checks, array $stored, CarbonImmutable $collectedAt): void
     {
         foreach ($stored as $evidence) {
             $check = $checks->get($evidence->type->value);

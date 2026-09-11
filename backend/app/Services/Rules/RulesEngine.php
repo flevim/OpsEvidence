@@ -90,8 +90,7 @@ class RulesEngine
             checks: $checks,
             latest: $this->latestEvidence($client->id),
             now: $now,
-            thresholdResolver: fn (int $accountId, ?int $clientId, RuleKey $rule): array
-                => RuleSetting::resolveThresholds($accountId, $clientId, $rule),
+            thresholdResolver: fn (int $accountId, ?int $clientId, RuleKey $rule): array => RuleSetting::resolveThresholds($accountId, $clientId, $rule),
         );
     }
 

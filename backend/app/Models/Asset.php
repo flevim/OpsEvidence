@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Enums\AssetType;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\AssetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Asset extends Model
 {
-    /** @use HasFactory<\Database\Factories\AssetFactory> */
+    /** @use HasFactory<AssetFactory> */
     use BelongsToAccount, HasFactory, SoftDeletes;
 
     protected $fillable = [

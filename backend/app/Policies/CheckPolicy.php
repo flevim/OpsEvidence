@@ -2,6 +2,4 @@
 
 namespace App\Policies;
 
-class CheckPolicy extends AccountScopedPolicy
-{
-}
+class CheckPolicy extends AccountScopedPolicy {}

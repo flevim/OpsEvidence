@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Domain\Enums\ReportStatus;
 use App\Http\Controllers\Api\Concerns\HandlesListQuery;
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Client;
 use App\Models\Report;
 use App\Services\Reporting\ReportBuilder;
@@ -17,9 +19,7 @@ class ReportController extends Controller
 {
     use HandlesListQuery;
 
-    public function __construct(private readonly ReportBuilder $builder)
-    {
-    }
+    public function __construct(private readonly ReportBuilder $builder) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -93,11 +93,11 @@ class ReportController extends Controller
         $this->authorize('update', $report);
 
         $report->forceFill([
-            'status' => \App\Domain\Enums\ReportStatus::Sent,
+            'status' => ReportStatus::Sent,
             'sent_at' => now(),
         ])->save();
 
-        \App\Models\AuditLog::record(
+        AuditLog::record(
             event: 'report.sent',
             subject: $report,
             changes: ['period_end' => $report->period_end->toDateString()],

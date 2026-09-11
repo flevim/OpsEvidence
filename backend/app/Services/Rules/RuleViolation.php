@@ -21,8 +21,7 @@ final readonly class RuleViolation
         public ?int $assetId = null,
         public ?int $evidenceId = null,
         public ?string $recommendation = null,
-    ) {
-    }
+    ) {}
 
     public function signature(): string
     {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Enums\TokenAbility;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\ApiTokenFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
  */
 class ApiToken extends Model
 {
-    /** @use HasFactory<\Database\Factories\ApiTokenFactory> */
+    /** @use HasFactory<ApiTokenFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [
@@ -48,7 +49,7 @@ class ApiToken extends Model
     }
 
     /**
-     * @param array<int, TokenAbility> $abilities
+     * @param  array<int, TokenAbility>  $abilities
      * @return array{0: string, 1: self}
      */
     public static function issue(

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\DailySummaryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DailySummary extends Model
 {
-    /** @use HasFactory<\Database\Factories\DailySummaryFactory> */
+    /** @use HasFactory<DailySummaryFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

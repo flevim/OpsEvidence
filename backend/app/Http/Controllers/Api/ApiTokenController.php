@@ -8,6 +8,7 @@ use App\Models\ApiToken;
 use App\Models\Asset;
 use App\Models\AuditLog;
 use App\Models\Client;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -68,7 +69,7 @@ class ApiTokenController extends Controller
             abilities: $abilities,
             clientId: $data['client_id'] ?? null,
             assetId: $data['asset_id'] ?? null,
-            expiresAt: isset($data['expires_at']) ? \Carbon\CarbonImmutable::parse($data['expires_at']) : null,
+            expiresAt: isset($data['expires_at']) ? CarbonImmutable::parse($data['expires_at']) : null,
             createdBy: $request->user()->id,
         );
 

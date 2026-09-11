@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Support\AccountContext;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -129,10 +130,10 @@ class IncidentManager
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<string, Incident>  $active
+     * @param  Collection<string, Incident>  $active
      * @param  array<int, string>  $seen
      */
-    private function resolveStale(\Illuminate\Support\Collection $active, array $seen): int
+    private function resolveStale(Collection $active, array $seen): int
     {
         $resolved = 0;
 

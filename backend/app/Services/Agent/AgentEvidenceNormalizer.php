@@ -21,9 +21,7 @@ use Throwable;
  */
 class AgentEvidenceNormalizer
 {
-    public function __construct(private readonly EvidenceNormalizer $normalizer)
-    {
-    }
+    public function __construct(private readonly EvidenceNormalizer $normalizer) {}
 
     /**
      * @param  array<string, mixed>  $data

@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Domain\Enums\IncidentSeverity;
 use App\Domain\Enums\RuleKey;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\RuleSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RuleSetting extends Model
 {
-    /** @use HasFactory<\Database\Factories\RuleSettingFactory> */
+    /** @use HasFactory<RuleSettingFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

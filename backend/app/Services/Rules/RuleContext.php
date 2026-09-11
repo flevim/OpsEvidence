@@ -34,8 +34,7 @@ final class RuleContext
         public readonly Collection $latest,
         public readonly CarbonImmutable $now,
         private readonly \Closure $thresholdResolver,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

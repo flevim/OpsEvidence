@@ -6,6 +6,7 @@ use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceSource;
 use App\Domain\Enums\EvidenceStatus;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\EvidenceFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ use RuntimeException;
  */
 class Evidence extends Model
 {
-    /** @use HasFactory<\Database\Factories\EvidenceFactory> */
+    /** @use HasFactory<EvidenceFactory> */
     use BelongsToAccount, HasFactory;
 
     public const UPDATED_AT = null;

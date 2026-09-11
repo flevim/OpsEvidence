@@ -15,9 +15,12 @@ frontend/node_modules/
 
 # Build
 backend/public/build
+backend/build/
 frontend/dist
 frontend/.vite
 *.tsbuildinfo
+.phpunit.result.cache
+.phpunit.cache/
 
 # Estado de runtime
 backend/storage/*.key

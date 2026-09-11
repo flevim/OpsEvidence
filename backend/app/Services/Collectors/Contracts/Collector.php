@@ -4,6 +4,7 @@ namespace App\Services\Collectors\Contracts;
 
 use App\Domain\Enums\CheckType;
 use App\Models\Check;
+use App\Services\Collectors\Exceptions\CollectionFailed;
 use App\Services\Evidence\EvidencePayload;
 
 interface Collector
@@ -25,7 +26,7 @@ interface Collector
      *
      * @return array<int, EvidencePayload>
      *
-     * @throws \App\Services\Collectors\Exceptions\CollectionFailed
+     * @throws CollectionFailed
      */
     public function collect(Check $check): array;
 }

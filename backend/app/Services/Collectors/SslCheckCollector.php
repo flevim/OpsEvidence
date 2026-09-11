@@ -20,8 +20,7 @@ class SslCheckCollector implements Collector
 {
     public function __construct(
         private readonly EvidenceNormalizer $normalizer,
-    ) {
-    }
+    ) {}
 
     public function supports(): array
     {

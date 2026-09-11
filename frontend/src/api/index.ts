@@ -53,7 +53,7 @@ export const clientsApi = {
     return data
   },
   async summary(clientId: number) {
-    const { data } = await http.get<Record<string, any>>(`/api/clients/${clientId}/summary`)
+    const { data } = await http.get<Record<string, unknown>>(`/api/clients/${clientId}/summary`)
     return data
   },
   async assets(clientId: number) {

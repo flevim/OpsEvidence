@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Enums\ActivityType;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Activity extends Model
 {
-    /** @use HasFactory<\Database\Factories\ActivityFactory> */
+    /** @use HasFactory<ActivityFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

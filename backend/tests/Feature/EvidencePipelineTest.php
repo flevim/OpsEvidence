@@ -9,6 +9,7 @@ use App\Models\Asset;
 use App\Models\Check;
 use App\Models\Client;
 use App\Models\Evidence;
+use App\Models\Integration;
 use App\Services\Evidence\EvidenceIngestor;
 use App\Services\Evidence\EvidencePayload;
 use Carbon\CarbonImmutable;
@@ -207,6 +208,6 @@ it('no expone las credenciales de una integración', function () {
         ->and($response->json('has_credentials'))->toBeTrue()
         ->and($response->getContent())->not->toContain('ghp_secreto_que_no_debe_salir');
 
-    $stored = \App\Models\Integration::withoutGlobalScopes()->findOrFail($response->json('id'));
+    $stored = Integration::withoutGlobalScopes()->findOrFail($response->json('id'));
     expect($stored->getRawOriginal('credentials'))->not->toContain('ghp_secreto_que_no_debe_salir');
 });

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Http;
 final readonly class HttpProbeResult
 {
     /**
-     * @param array<string, mixed> $headers
+     * @param  array<string, mixed>  $headers
      */
     public function __construct(
         public bool $reachable,
@@ -21,8 +21,7 @@ final readonly class HttpProbeResult
         public ?string $error = null,
         public array $headers = [],
         public ?string $finalUrl = null,
-    ) {
-    }
+    ) {}
 
     public function isSuccessful(): bool
     {
@@ -37,7 +36,7 @@ final readonly class HttpProbeResult
 class HttpProbe
 {
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function probe(string $url, array $options = []): HttpProbeResult
     {

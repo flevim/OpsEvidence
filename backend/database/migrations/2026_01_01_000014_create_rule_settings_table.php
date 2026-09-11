@@ -23,15 +23,15 @@ return new class extends Migration
         });
 
         DB::statement(
-            "CREATE UNIQUE INDEX rule_settings_account_default_unique
+            'CREATE UNIQUE INDEX rule_settings_account_default_unique
              ON rule_settings (account_id, rule_key)
-             WHERE client_id IS NULL"
+             WHERE client_id IS NULL'
         );
 
         DB::statement(
-            "CREATE UNIQUE INDEX rule_settings_client_unique
+            'CREATE UNIQUE INDEX rule_settings_client_unique
              ON rule_settings (account_id, client_id, rule_key)
-             WHERE client_id IS NOT NULL"
+             WHERE client_id IS NOT NULL'
         );
 
         DB::statement("ALTER TABLE rule_settings ADD CONSTRAINT rule_settings_severity_check CHECK (severity IS NULL OR severity IN ('info', 'warning', 'critical'))");

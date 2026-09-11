@@ -9,9 +9,7 @@ use Illuminate\Http\JsonResponse;
 
 class ClientSummaryController extends Controller
 {
-    public function __construct(private readonly DashboardService $dashboard)
-    {
-    }
+    public function __construct(private readonly DashboardService $dashboard) {}
 
     public function __invoke(Client $client): JsonResponse
     {

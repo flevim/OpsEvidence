@@ -2,7 +2,6 @@
 
 namespace App\Services\Reporting;
 
-use App\Domain\Enums\IncidentSeverity;
 use App\Domain\Enums\IncidentStatus;
 use App\Domain\Enums\ReportStatus;
 use App\Models\Activity;
@@ -26,8 +25,7 @@ class ReportBuilder
     public function __construct(
         private readonly ReportMetricsCollector $collector,
         private readonly HealthScoreCalculator $healthScore,
-    ) {
-    }
+    ) {}
 
     public function build(Client $client, CarbonImmutable $from, CarbonImmutable $to, ?int $userId = null): Report
     {

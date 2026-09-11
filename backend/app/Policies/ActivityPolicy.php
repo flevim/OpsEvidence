@@ -2,6 +2,4 @@
 
 namespace App\Policies;
 
-class ActivityPolicy extends AccountScopedPolicy
-{
-}
+class ActivityPolicy extends AccountScopedPolicy {}

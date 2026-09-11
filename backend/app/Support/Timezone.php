@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Carbon\CarbonImmutable;
 use DateTimeZone;
 
 class Timezone
@@ -16,14 +17,14 @@ class Timezone
     /**
      * Convierte una fecha de un periodo de informe a limites UTC del dia.
      *
-     * @return array{0: \Carbon\CarbonImmutable, 1: \Carbon\CarbonImmutable}
+     * @return array{0: CarbonImmutable, 1: CarbonImmutable}
      */
     public static function dayBounds(string $date, ?string $timezone = null): array
     {
         $zone = $timezone ?? self::DEFAULT;
 
-        $start = \Carbon\CarbonImmutable::parse($date, $zone)->startOfDay()->utc();
-        $end = \Carbon\CarbonImmutable::parse($date, $zone)->endOfDay()->utc();
+        $start = CarbonImmutable::parse($date, $zone)->startOfDay()->utc();
+        $end = CarbonImmutable::parse($date, $zone)->endOfDay()->utc();
 
         return [$start, $end];
     }

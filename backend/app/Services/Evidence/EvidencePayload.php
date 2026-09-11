@@ -19,8 +19,8 @@ use DateTimeInterface;
 final readonly class EvidencePayload
 {
     /**
-     * @param array<string, mixed>|null $data
-     * @param array<string, mixed>|null $rawData
+     * @param  array<string, mixed>|null  $data
+     * @param  array<string, mixed>|null  $rawData
      */
     public function __construct(
         public CheckType $type,
@@ -35,8 +35,7 @@ final readonly class EvidencePayload
         public ?DateTimeInterface $collectedAt = null,
         public EvidenceSource $source = EvidenceSource::Check,
         public string $discriminator = '',
-    ) {
-    }
+    ) {}
 
     public static function make(
         CheckType $type,

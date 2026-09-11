@@ -11,6 +11,7 @@ use App\Models\Asset;
 use App\Models\Client;
 use App\Models\Evidence;
 use App\Services\Evidence\EvidenceIngestor;
+use App\Services\Evidence\EvidenceNormalizer;
 use App\Services\Evidence\EvidencePayload;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
@@ -21,9 +22,7 @@ class EvidenceController extends Controller
 {
     use HandlesListQuery;
 
-    public function __construct(private readonly EvidenceIngestor $ingestor)
-    {
-    }
+    public function __construct(private readonly EvidenceIngestor $ingestor) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -127,7 +126,7 @@ class EvidenceController extends Controller
         $this->authorize('view', $client);
         $this->authorize('view', $asset);
 
-        $normalizer = app(\App\Services\Evidence\EvidenceNormalizer::class);
+        $normalizer = app(EvidenceNormalizer::class);
         $status = $normalizer->fromBackupStatus($data['status']);
 
         $payload = EvidencePayload::make(

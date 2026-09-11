@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Domain\Enums\IntegrationType;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\IntegrationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Integration extends Model
 {
-    /** @use HasFactory<\Database\Factories\IntegrationFactory> */
+    /** @use HasFactory<IntegrationFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

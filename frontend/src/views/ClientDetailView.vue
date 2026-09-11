@@ -9,7 +9,7 @@ import { ASSET_TYPE_LABELS } from '@/types'
 const props = defineProps<{ id: string }>()
 
 const clientId = Number(props.id)
-const summary = ref<Record<string, any> | null>(null)
+const summary = ref<Record<string, unknown> | null>(null)
 const assets = ref<Asset[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)

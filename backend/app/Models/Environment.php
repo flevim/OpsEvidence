@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Domain\Enums\EnvironmentType;
 use App\Models\Concerns\BelongsToAccount;
+use Database\Factories\EnvironmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Environment extends Model
 {
-    /** @use HasFactory<\Database\Factories\EnvironmentFactory> */
+    /** @use HasFactory<EnvironmentFactory> */
     use BelongsToAccount, HasFactory;
 
     protected $fillable = [

@@ -22,8 +22,7 @@ class GithubWorkflowCollector implements Collector
 {
     public function __construct(
         private readonly EvidenceNormalizer $normalizer,
-    ) {
-    }
+    ) {}
 
     public function supports(): array
     {
@@ -127,7 +126,7 @@ class GithubWorkflowCollector implements Collector
     }
 
     /**
-     * @param array<string, mixed> $run
+     * @param  array<string, mixed>  $run
      */
     private function title(array $run): string
     {

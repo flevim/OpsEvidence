@@ -18,8 +18,7 @@ class HttpCheckCollector implements Collector
     public function __construct(
         private readonly HttpProbe $probe,
         private readonly EvidenceNormalizer $normalizer,
-    ) {
-    }
+    ) {}
 
     public function supports(): array
     {

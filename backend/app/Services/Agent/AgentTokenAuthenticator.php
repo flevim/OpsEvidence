@@ -6,7 +6,6 @@ use App\Domain\Enums\TokenAbility;
 use App\Models\ApiToken;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 /**
  * Autentica peticiones de agentes y webhooks mediante token propio.

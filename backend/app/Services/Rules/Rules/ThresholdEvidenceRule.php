@@ -4,6 +4,7 @@ namespace App\Services\Rules\Rules;
 
 use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceStatus;
+use App\Domain\Enums\IncidentSeverity;
 use App\Services\Rules\Contracts\Rule;
 use App\Services\Rules\RuleContext;
 use App\Services\Rules\RuleViolation;
@@ -51,8 +52,8 @@ abstract class ThresholdEvidenceRule implements Rule
         }
 
         $severity = match (true) {
-            $worst->value_numeric >= $critical => \App\Domain\Enums\IncidentSeverity::Critical,
-            $worst->value_numeric >= $warning => \App\Domain\Enums\IncidentSeverity::Warning,
+            $worst->value_numeric >= $critical => IncidentSeverity::Critical,
+            $worst->value_numeric >= $warning => IncidentSeverity::Warning,
             default => null,
         };
 

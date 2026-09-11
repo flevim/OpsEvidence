@@ -11,7 +11,6 @@ use App\Models\Check;
 use App\Models\Client;
 use App\Models\Evidence;
 use App\Models\Incident;
-use App\Models\User;
 use App\Support\AccountContext;
 
 /**
