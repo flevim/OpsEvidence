@@ -76,7 +76,7 @@ services:
 
   worker:
     <<: *backend
-    command: ["php", "artisan", "queue:work", "--tries=3", "--backoff=30", "--max-time=3600", "--sleep=3"]
+    command: ["php", "artisan", "queue:work", "--tries=3", "--backoff=30", "--max-time=3600", "--sleep=3", "--queue=default,checks,rules"]
     restart: unless-stopped
 
   scheduler:

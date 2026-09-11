@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 
 /**
@@ -14,9 +15,12 @@ use Illuminate\Http\Request;
 trait HandlesListQuery
 {
     /**
+     * Acepta Builder o Relation: los endpoints anidados pasan relaciones
+     * (p. ej. `$client->assets()`), no builders.
+     *
      * @param  array<int, string>  $allowed
      */
-    protected function applySorting(Builder $query, Request $request, array $allowed, string $default): Builder
+    protected function applySorting(Builder|Relation $query, Request $request, array $allowed, string $default): Builder|Relation
     {
         $sort = (string) $request->query('sort', $default);
 
