@@ -59,6 +59,7 @@ Seguridad planificada y aún no implementada (el listado de lo implementado est�
 
 ## TECH DEBT
 
+- [ ] Imagen de producción (nginx + php-fpm) con usuario sin privilegios. Hoy `docker/php/Dockerfile` es solo de desarrollo y corre como root por los volúmenes que debe escribir; Trivy lo marca con DS-0002 y está aceptado en `.trivyignore`.
 - [ ] Particionado de `evidence` por rango de `collected_at` cuando supere ~100 M de filas
 - [ ] Cache de los agregados del dashboard (Redis) si las consultas pasan de 500 ms
 - [ ] Índices GIN en columnas JSONB que hoy no se consultan

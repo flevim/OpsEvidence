@@ -1,0 +1,17 @@
+# Riesgos aceptados conscientemente por Trivy (escaneo de configuración).
+#
+# Cada entrada debe estar justificada. Este archivo NO es un atajo para silenciar
+# hallazgos: Trivy sigue escaneando todo lo demás con exit-code 1.
+
+# DS-0002: "Specify at least 1 USER command in Dockerfile with non-root user".
+#
+# docker/php/Dockerfile es la imagen SOLO de desarrollo: sirve la app con el
+# servidor embebido (`artisan serve`), monta el código por bind mount y usa
+# volúmenes nombrados (vendor, storage, bootstrap/cache) que el proceso de init
+# debe poder escribir. Ejecutarla como no-root requiere orquestar el chown de
+# esos volúmenes, algo que no aporta seguridad real en un entorno local donde el
+# contenedor no expone servicios de confianza.
+#
+# La imagen de producción (nginx + php-fpm, usuario sin privilegios, sin
+# servidor embebido) está en el backlog: docs/backlog.md -> TECH DEBT.
+DS-0002
