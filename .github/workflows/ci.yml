@@ -16,6 +16,11 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      # Los servicios de GitHub Actions se publican en localhost para jobs que
+      # corren directo en el runner. El nombre 'postgres' solo resuelve dentro
+      # de la red de Docker.
+      DB_HOST: 127.0.0.1
     services:
       postgres:
         image: postgres:16-alpine
