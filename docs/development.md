@@ -74,3 +74,34 @@ python -m venv .venv
 `phpstan.neon` incluye un baseline (`phpstan-baseline.neon`) con errores conocidos.
 Al introducir código nuevo que PHPStan detecte, no regeneres el baseline a ciegas:
 corrige el error o justifica la excepción.
+
+## Operación: reiniciar el worker tras cambiar código
+
+**El worker de colas arranca la aplicación una vez y mantiene el código en memoria.**
+Si cambias el motor de reglas, un collector o cualquier servicio que ejecute un job,
+el cambio **no tiene efecto hasta reiniciar el worker**:
+
+```bash
+docker compose restart worker
+# o, sin cortar el servicio:
+docker compose exec backend php artisan queue:restart
+```
+
+Esto no es teórico: durante la validación en el servidor real, un cambio en una regla
+se aplicó en la API (que relee el código en cada petición) pero no en el worker, y un
+incidente falso siguió abierto sin que nadie entendiera por qué. El síntoma es
+desconcertante — la lógica parece correcta en el código y el comportamiento no cambia.
+
+La API, en cambio, sí toma los cambios al instante porque `artisan serve` reinicia el
+contexto en cada petición. Esa asimetría es la que confunde.
+
+## Operación: programar el agente en un servidor
+
+`agent/cron-collect.sh` es el envoltorio para ejecutar el agente desde cron. Usa
+`PYTHONPATH` en lugar de instalar el paquete, porque muchos servidores en producción
+no tienen `pip` ni `python3-venv` (Ubuntu 20.04, por ejemplo) y no hace falta root
+para leer `/proc`.
+
+```
+*/5 * * * * $HOME/opsevidence-agent/cron-collect.sh >/dev/null 2>&1
+```
