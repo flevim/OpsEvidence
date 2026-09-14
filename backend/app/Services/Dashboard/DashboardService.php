@@ -11,6 +11,7 @@ use App\Models\Check;
 use App\Models\Client;
 use App\Models\Evidence;
 use App\Models\Incident;
+use App\Services\Onboarding\ClientOnboardingChecklist;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\DB;
  */
 class DashboardService
 {
+    public function __construct(private readonly ClientOnboardingChecklist $onboarding) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -96,6 +99,7 @@ class DashboardService
                 'containers_total' => $this->containers($latest)['total'],
             ],
             'issues' => $this->issues($openIncidents, $client->account_id),
+            'onboarding' => $this->onboarding->forClient($client),
             'evidence' => $latest->take(20)->values()->map(fn (Evidence $evidence): array => [
                 'id' => $evidence->id,
                 'type' => $evidence->type->value,

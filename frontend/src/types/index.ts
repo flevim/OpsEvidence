@@ -234,3 +234,20 @@ export const INCIDENT_STATUS_LABELS: Record<IncidentStatus, string> = {
   resolved: 'Resuelto',
   ignored: 'Ignorado',
 }
+
+export interface OnboardingStep {
+  key: string
+  label: string
+  description: string
+  hint: string
+  done: boolean
+}
+
+export interface Onboarding {
+  completed: number
+  total: number
+  completion: number
+  is_complete: boolean
+  next_step: OnboardingStep | null
+  steps: OnboardingStep[]
+}

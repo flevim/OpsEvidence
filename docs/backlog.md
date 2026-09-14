@@ -118,7 +118,7 @@ Ordenadas por valor esperado, no por dificultad.
 - [ ] Audit log visible en la UI
 - [ ] Alertas por email y webhook saliente
 - [ ] Línea base automática y detección de anomalías simples (sin IA)
-- [ ] Onboarding guiado: checklist de "qué falta conectar"
+- [x] Onboarding guiado: checklist de "qué falta conectar" por cliente, derivada del estado real (9 pasos)
 - [ ] Medición del tiempo de armado del informe (instrumentación de la hipótesis)
 
 ### Comercial

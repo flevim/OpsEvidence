@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { clientsApi } from '@/api'
 import { errorMessage } from '@/api/http'
 import StatusBadge from '@/components/StatusBadge.vue'
-import type { Asset, Evidence } from '@/types'
+import type { Asset, Evidence, Onboarding, OnboardingStep } from '@/types'
 import { ASSET_TYPE_LABELS } from '@/types'
 
 const props = defineProps<{ id: string }>()
@@ -49,6 +49,14 @@ const clientName = computed<string>(() => {
   return client?.name ?? 'Cliente'
 })
 
+const onboarding = computed<Onboarding | null>(
+  () => (summary.value?.onboarding as Onboarding | undefined) ?? null,
+)
+
+const pendingSteps = computed<OnboardingStep[]>(
+  () => onboarding.value?.steps.filter((step) => !step.done) ?? [],
+)
+
 function recentEvidence(): EvidenceRow[] {
   return (summary.value?.evidence ?? []) as EvidenceRow[]
 }
@@ -61,6 +69,49 @@ function recentEvidence(): EvidenceRow[] {
     </v-btn>
 
     <h1 class="text-h5 font-weight-bold mb-4">{{ clientName }}</h1>
+
+    <v-card v-if="onboarding && !onboarding.is_complete" class="pa-4 mb-6">
+      <div class="d-flex align-center">
+        <div>
+          <div class="text-subtitle-2 font-weight-bold">Configuración inicial</div>
+          <div class="text-caption text-medium-emphasis">
+            {{ onboarding.completed }} de {{ onboarding.total }} pasos completados
+          </div>
+        </div>
+        <v-spacer />
+        <div class="text-h6">{{ onboarding.completion }}%</div>
+      </div>
+
+      <v-progress-linear
+        :model-value="onboarding.completion"
+        color="primary"
+        height="6"
+        rounded
+        class="my-3"
+      />
+
+      <div class="text-caption font-weight-bold text-medium-emphasis mb-1">Qué falta</div>
+
+      <v-list density="compact" class="pa-0">
+        <v-list-item
+          v-for="step in pendingSteps"
+          :key="step.key"
+          prepend-icon="mdi-circle-outline"
+          :title="step.label"
+          :subtitle="step.hint"
+        />
+      </v-list>
+    </v-card>
+
+    <v-alert
+      v-else-if="onboarding?.is_complete"
+      type="success"
+      variant="tonal"
+      density="compact"
+      class="mb-6"
+    >
+      Cliente completamente configurado: los {{ onboarding.total }} pasos están completos.
+    </v-alert>
 
     <v-alert v-if="error" type="error" variant="tonal" class="mb-4">{{ error }}</v-alert>
     <v-progress-linear v-if="loading" indeterminate class="mb-4" />
