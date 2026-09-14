@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Domain\Enums\AssetType;
 use App\Domain\Enums\CheckType;
 use App\Http\Controllers\Controller;
 use App\Jobs\RunCheckJob;
@@ -14,6 +15,28 @@ use Illuminate\Validation\ValidationException;
 
 class CheckController extends Controller
 {
+    /**
+     * Catálogo de tipos de check con los tipos de activo compatibles.
+     *
+     * Vive en el backend para que el panel no duplique la regla de
+     * compatibilidad ni la lista de tipos.
+     */
+    public function types(): JsonResponse
+    {
+        $types = collect(CheckType::cases())->map(fn (CheckType $type): array => [
+            'value' => $type->value,
+            'label' => $type->label(),
+            'asset_types' => array_map(
+                static fn (AssetType $assetType): string => $assetType->value,
+                $type->supportedAssetTypes(),
+            ),
+            'collected_by_platform' => $type->isCollectedByPlatform(),
+            'default_interval_seconds' => $type->defaultIntervalSeconds(),
+        ]);
+
+        return response()->json(['data' => $types->values()]);
+    }
+
     public function indexForAsset(Asset $asset): JsonResponse
     {
         $this->authorize('view', $asset);

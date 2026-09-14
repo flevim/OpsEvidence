@@ -3,6 +3,7 @@ import type {
   ApiToken,
   Asset,
   Check,
+  CheckTypeOption,
   Client,
   Dashboard,
   Evidence,
@@ -74,6 +75,30 @@ export const assetsApi = {
   async evidence(assetId: number) {
     const { data } = await http.get<Paginated<Evidence>>(`/api/assets/${assetId}/evidence`)
     return data
+  },
+}
+
+export const checkTypesApi = {
+  async list() {
+    const { data } = await http.get<{ data: CheckTypeOption[] }>('/api/check-types')
+    return data.data
+  },
+}
+
+export const checksApi = {
+  async create(
+    assetId: number,
+    payload: { type: string; name: string; configuration?: Record<string, unknown> },
+  ) {
+    const { data } = await http.post<Check>(`/api/assets/${assetId}/checks`, payload)
+    return data
+  },
+  async update(id: number, payload: Record<string, unknown>) {
+    const { data } = await http.patch<Check>(`/api/checks/${id}`, payload)
+    return data
+  },
+  async run(id: number) {
+    await http.post(`/api/checks/${id}/run`)
   },
 }
 

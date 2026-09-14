@@ -243,6 +243,14 @@ export interface OnboardingStep {
   done: boolean
 }
 
+export interface CheckTypeOption {
+  value: string
+  label: string
+  asset_types: string[]
+  collected_by_platform: boolean
+  default_interval_seconds: number
+}
+
 export interface Onboarding {
   completed: number
   total: number

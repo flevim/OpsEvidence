@@ -110,3 +110,18 @@ it('devuelve 404 al listar activos de un cliente inexistente', function () {
 
     $this->getJson('/api/clients/999999/assets')->assertNotFound();
 });
+
+it('expone el catálogo de tipos de check con sus activos compatibles', function () {
+    actingAsAccount();
+
+    $response = $this->getJson('/api/check-types')->assertOk();
+
+    $types = collect($response->json('data'))->keyBy('value');
+
+    expect($types)->toHaveCount(14)
+        ->and($types['HTTP_STATUS']['asset_types'])->toContain('WEBSITE')
+        ->and($types['HTTP_STATUS']['collected_by_platform'])->toBeTrue()
+        ->and($types['DISK_USAGE']['asset_types'])->toContain('SERVER')
+        ->and($types['DISK_USAGE']['collected_by_platform'])->toBeFalse()
+        ->and($types['GITHUB_WORKFLOW']['asset_types'])->toBe(['REPOSITORY']);
+});

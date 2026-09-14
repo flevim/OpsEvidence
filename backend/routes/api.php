@@ -92,6 +92,8 @@ Route::middleware(['auth:sanctum', 'account.context', 'tenant.ownership', 'throt
     Route::post('clients/{client}/assets', [AssetController::class, 'storeForClient']);
     Route::apiResource('assets', AssetController::class)->except(['store']);
 
+    Route::get('check-types', [CheckController::class, 'types']);
+
     Route::get('assets/{asset}/checks', [CheckController::class, 'indexForAsset']);
     Route::post('assets/{asset}/checks', [CheckController::class, 'storeForAsset']);
     Route::apiResource('checks', CheckController::class)->only(['show', 'update', 'destroy']);
