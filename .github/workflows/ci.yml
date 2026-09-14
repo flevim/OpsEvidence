@@ -18,10 +18,20 @@ jobs:
         working-directory: backend
     env:
       # Los servicios de GitHub Actions se publican en localhost para jobs que
-      # corren directo en el runner. El nombre 'postgres' solo resuelve dentro
-      # de la red de Docker.
+      # corren directo en el runner. Los nombres 'postgres' y 'redis' solo
+      # resuelven dentro de la red de Docker Compose.
       DB_HOST: 127.0.0.1
+      REDIS_HOST: 127.0.0.1
     services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       postgres:
         image: postgres:16-alpine
         env:
@@ -64,8 +74,26 @@ jobs:
       - name: Análisis estático (PHPStan)
         run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
+      - name: Comprobar conexión a la base de datos
+        run: |
+          php -r '
+            $host = getenv("DB_HOST") ?: "127.0.0.1";
+            echo "DB_HOST resuelto: " . (getenv("DB_HOST") ?: "(vacio, se usa 127.0.0.1)") . PHP_EOL;
+            try {
+              new PDO("pgsql:host=" . $host . ";port=5432;dbname=opsevidence_test", "opsevidence", "opsevidence");
+              echo "CONEXION OK" . PHP_EOL;
+            } catch (Throwable $e) {
+              echo "FALLO DE CONEXION: " . $e->getMessage() . PHP_EOL;
+              exit(1);
+            }
+          '
+
       - name: Tests (Pest)
         run: php artisan test
+
+      - name: Registro de Laravel (solo si algo falló)
+        if: failure()
+        run: tail -80 storage/logs/laravel.log || true
 
   frontend:
     name: Frontend (lint + typecheck + tests + build)
@@ -133,7 +161,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Análisis de configuración (Trivy)
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: .
