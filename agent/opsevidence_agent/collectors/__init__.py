@@ -7,7 +7,7 @@ Deben ser tolerantes: si la fuente no existe, devuelven lista vacía.
 from __future__ import annotations
 
 import logging
-from typing import Callable
+from typing import Any
 
 from .disks import collect_disks
 from .docker import collect_docker
@@ -17,9 +17,11 @@ from .updates import collect_pending_updates
 
 logger = logging.getLogger(__name__)
 
-Collector = Callable[[], list[dict]]
-
-COLLECTORS: list[tuple[str, Collector]] = [
+# Las anotaciones de este modulo usan list[...]/dict[...] y son seguras en
+# Python 3.8 porque `from __future__ import annotations` las deja como cadenas.
+# Suscribir los tipos incorporados en tiempo de ejecucion si fallaria en 3.8,
+# asi que aqui no hay ninguna asignacion de ese tipo.
+COLLECTORS: list[tuple] = [
     ("host_info", collect_host_info),
     ("system", collect_system),
     ("disks", collect_disks),
@@ -32,9 +34,9 @@ def collector_names() -> list[str]:
     return [name for name, _ in COLLECTORS]
 
 
-def collect_all() -> list[dict]:
+def collect_all() -> list[dict[str, Any]]:
     """Ejecuta todos los collectors, aislando el fallo de cada uno."""
-    evidence: list[dict] = []
+    evidence: list[dict[str, Any]] = []
 
     for name, collector in COLLECTORS:
         try:

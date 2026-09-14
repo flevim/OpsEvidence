@@ -37,8 +37,8 @@ fi
 
 command -v python3 >/dev/null 2>&1 || { echo "error: falta python3." >&2; exit 1; }
 
-python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)' \
-  || { echo "error: se requiere Python 3.9 o superior." >&2; exit 1; }
+python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' \
+  || { echo "error: se requiere Python 3.8 o superior." >&2; exit 1; }
 
 echo "==> Usuario de sistema 'opsevidence'"
 if ! id opsevidence >/dev/null 2>&1; then
