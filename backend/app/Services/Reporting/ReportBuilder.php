@@ -54,7 +54,25 @@ class ReportBuilder
 
     public function renderHtml(Report $report): string
     {
-        return View::make('reports.monthly', [
+        return View::make('reports.monthly', $this->viewData($report))->render();
+    }
+
+    /**
+     * HTML para PDF. Usa una plantilla aparte porque dompdf no soporta
+     * grid/flexbox ni variables CSS: la version imprimible se construye con
+     * tablas y estilos basicos.
+     */
+    public function renderPdfHtml(Report $report): string
+    {
+        return View::make('reports.monthly-pdf', $this->viewData($report))->render();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function viewData(Report $report): array
+    {
+        return [
             'report' => $report,
             'client' => $report->client,
             'account' => $report->account,
@@ -62,7 +80,7 @@ class ReportBuilder
             'summary' => $report->summary ?? [],
             'snapshot' => $report->snapshot ?? [],
             'generatedAt' => now(),
-        ])->render();
+        ];
     }
 
     /**

@@ -29,6 +29,25 @@ aunque la evidencia cruda haya sido purgada por retención.
 
 Ver [docs/health-score.md](health-score.md).
 
+## Entrega
+
+| Acción | Endpoint | Qué hace |
+|---|---|---|
+| Ver informe | `GET /api/reports/{id}/html` | HTML responsive, para revisar o imprimir |
+| Descargar PDF | `GET /api/reports/{id}/pdf` | PDF A4 generado con dompdf |
+| Enviar por correo | `POST /api/reports/{id}/send` | Envía el informe al contacto del cliente con el PDF adjunto y lo marca como enviado |
+| Marcar enviado | `POST /api/reports/{id}/mark-sent` | Registro manual, para cuando se entrega por otra vía |
+
+El PDF usa una plantilla propia (`reports/monthly-pdf.blade.php`) porque dompdf no
+interpreta grid ni flexbox: el documento imprimible se construye con tablas.
+
+El comando `opsevidence:generate-monthly-reports` genera el informe del mes
+anterior para cada cliente activo y corre el día 1 de cada mes. Con `--send` los
+envía; por defecto solo los genera, porque **enviar al cliente es una decisión
+humana**, no automática.
+
+En desarrollo los correos se ven en **Mailpit**: http://localhost:8025
+
 ## Marcar como enviado
 
 `POST /api/reports/{id}/mark-sent` registra `sent_at`. Es la instrumentación de la
@@ -36,4 +55,5 @@ hipótesis de negocio: mide si el informe realmente se entrega al cliente.
 
 ## Futuro
 
-PDF, programación mensual, envío por email y white label están en el backlog.
+White label, firma de conformidad del cliente y portal de cliente final están en el
+backlog.

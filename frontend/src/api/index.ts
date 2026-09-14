@@ -105,6 +105,13 @@ export const reportsApi = {
     const { data } = await http.post<Report>(`/api/reports/${id}/mark-sent`)
     return data
   },
+  async send(id: number, payload: { email?: string; note?: string } = {}) {
+    const { data } = await http.post<{ message: string; sent_to: string; sent_at: string }>(
+      `/api/reports/${id}/send`,
+      payload,
+    )
+    return data
+  },
 }
 
 export const tokensApi = {

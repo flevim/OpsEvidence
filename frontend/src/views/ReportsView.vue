@@ -27,6 +27,14 @@ function reportUrl(id: number): string {
   return `${base}/api/reports/${id}/html`
 }
 
+function pdfUrl(id: number): string {
+  const base = import.meta.env.VITE_API_URL || ''
+  return `${base}/api/reports/${id}/pdf`
+}
+
+const sendingId = ref<number | null>(null)
+const feedback = ref<string | null>(null)
+
 async function load(): Promise<void> {
   loading.value = true
   error.value = null
@@ -64,6 +72,21 @@ async function markSent(report: Report): Promise<void> {
     await load()
   } catch (exception) {
     error.value = errorMessage(exception)
+  }
+}
+
+async function sendReport(report: Report): Promise<void> {
+  sendingId.value = report.id
+  error.value = null
+
+  try {
+    const result = await reportsApi.send(report.id)
+    feedback.value = result.message
+    await load()
+  } catch (exception) {
+    error.value = errorMessage(exception)
+  } finally {
+    sendingId.value = null
   }
 }
 
@@ -117,6 +140,18 @@ onMounted(load)
             <v-btn size="small" variant="text" :href="reportUrl(report.id)" target="_blank" rel="noopener">
               Ver informe
             </v-btn>
+            <v-btn size="small" variant="text" :href="pdfUrl(report.id)" target="_blank" rel="noopener">
+              PDF
+            </v-btn>
+            <v-btn
+              size="small"
+              variant="text"
+              color="primary"
+              :loading="sendingId === report.id"
+              @click="sendReport(report)"
+            >
+              Enviar al cliente
+            </v-btn>
             <v-btn
               v-if="report.status !== 'sent'"
               size="small"
@@ -156,5 +191,14 @@ onMounted(load)
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      :model-value="feedback !== null"
+      color="success"
+      :timeout="4000"
+      @update:model-value="feedback = null"
+    >
+      {{ feedback }}
+    </v-snackbar>
   </div>
 </template>

@@ -114,6 +114,12 @@ Route::middleware(['auth:sanctum', 'account.context', 'tenant.ownership', 'throt
     Route::get('reports/{report}/html', [ReportController::class, 'html'])
         ->middleware('throttle:api-heavy')
         ->name('reports.html');
+    Route::get('reports/{report}/pdf', [ReportController::class, 'pdf'])
+        ->middleware('throttle:api-heavy')
+        ->name('reports.pdf');
+    Route::post('reports/{report}/send', [ReportController::class, 'send'])
+        ->middleware('throttle:api-heavy')
+        ->name('reports.send');
     Route::post('reports/{report}/mark-sent', [ReportController::class, 'markSent']);
 
     Route::apiResource('integrations', IntegrationController::class);

@@ -5,21 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Domain\Enums\ReportStatus;
 use App\Http\Controllers\Api\Concerns\HandlesListQuery;
 use App\Http\Controllers\Controller;
+use App\Mail\ReportMail;
 use App\Models\AuditLog;
 use App\Models\Client;
 use App\Models\Report;
 use App\Services\Reporting\ReportBuilder;
+use App\Services\Reporting\ReportPdfRenderer;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class ReportController extends Controller
 {
     use HandlesListQuery;
 
-    public function __construct(private readonly ReportBuilder $builder) {}
+    public function __construct(
+        private readonly ReportBuilder $builder,
+        private readonly ReportPdfRenderer $pdfRenderer,
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -80,6 +86,71 @@ class ReportController extends Controller
 
         return response($this->builder->renderHtml($report))
             ->header('Content-Type', 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Informe en PDF, listo para adjuntar o imprimir.
+     */
+    public function pdf(Report $report): Response
+    {
+        $this->authorize('view', $report);
+
+        return response($this->pdfRenderer->render($report))
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="'.$this->pdfRenderer->filename($report).'"');
+    }
+
+    /**
+     * Envía el informe por correo al contacto del cliente, con el PDF adjunto.
+     *
+     * Se marca como enviado en el mismo acto: `sent_at` es la instrumentación
+     * de la hipótesis de negocio, porque mide si el informe se entrega de
+     * verdad y no solo si se generó.
+     */
+    public function send(Request $request, Report $report): JsonResponse
+    {
+        $this->authorize('update', $report);
+
+        $data = $request->validate([
+            'email' => ['nullable', 'email', 'max:190'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $recipient = $data['email'] ?? $report->client->contact_email;
+
+        if (blank($recipient)) {
+            throw ValidationException::withMessages([
+                'email' => 'El cliente no tiene correo de contacto: indica uno para enviar el informe.',
+            ]);
+        }
+
+        Mail::to($recipient)->send(
+            new ReportMail($report, $this->pdfRenderer->render($report), $data['note'] ?? null),
+        );
+
+        $report->forceFill([
+            'status' => ReportStatus::Sent,
+            'sent_at' => now(),
+        ])->save();
+
+        AuditLog::record(
+            event: 'report.sent',
+            subject: $report,
+            changes: [
+                'to' => $recipient,
+                'period_end' => $report->period_end->toDateString(),
+                'channel' => 'email',
+            ],
+            userId: $request->user()->id,
+            ip: $request->ip(),
+        );
+
+        return response()->json([
+            'message' => "Informe enviado a {$recipient}.",
+            'sent_to' => $recipient,
+            'sent_at' => $report->sent_at?->toIso8601String(),
+            'report' => $report->fresh()->load('client:id,name'),
+        ]);
     }
 
     /**

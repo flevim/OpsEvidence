@@ -23,6 +23,12 @@ Schedule::command('opsevidence:reconcile-incidents')
     ->hourly()
     ->withoutOverlapping(10);
 
+// El día 1 de cada mes queda el informe del mes anterior generado, listo para
+// revisar y enviar. No se envía solo: enviar al cliente es una decisión humana.
+Schedule::command('opsevidence:generate-monthly-reports')
+    ->monthlyOn(1, '06:00')
+    ->withoutOverlapping(120);
+
 Schedule::command('opsevidence:prune-evidence')
     ->dailyAt('03:30')
     ->withoutOverlapping(60);
