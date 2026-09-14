@@ -22,14 +22,29 @@ const form = ref({
 
 const canGenerate = computed(() => form.value.client_id !== null)
 
-function reportUrl(id: number): string {
-  const base = import.meta.env.VITE_API_URL || ''
-  return `${base}/api/reports/${id}/html`
+// El HTML y el PDF viven detras de la autenticacion por Bearer: una navegacion
+// directa del navegador no envia la cabecera, asi que se descargan con axios y
+// se abren desde un blob local.
+async function openReport(report: Report): Promise<void> {
+  try {
+    const html = await reportsApi.html(report.id)
+    const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+  } catch (exception) {
+    error.value = errorMessage(exception)
+  }
 }
 
-function pdfUrl(id: number): string {
-  const base = import.meta.env.VITE_API_URL || ''
-  return `${base}/api/reports/${id}/pdf`
+async function openPdf(report: Report): Promise<void> {
+  try {
+    const blob = await reportsApi.pdfBlob(report.id)
+    const url = URL.createObjectURL(blob)
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+  } catch (exception) {
+    error.value = errorMessage(exception)
+  }
 }
 
 const sendingId = ref<number | null>(null)
@@ -137,12 +152,8 @@ onMounted(load)
           </td>
           <td>{{ report.status }}</td>
           <td class="text-right">
-            <v-btn size="small" variant="text" :href="reportUrl(report.id)" target="_blank" rel="noopener">
-              Ver informe
-            </v-btn>
-            <v-btn size="small" variant="text" :href="pdfUrl(report.id)" target="_blank" rel="noopener">
-              PDF
-            </v-btn>
+            <v-btn size="small" variant="text" @click="openReport(report)">Ver informe</v-btn>
+            <v-btn size="small" variant="text" @click="openPdf(report)">PDF</v-btn>
             <v-btn
               size="small"
               variant="text"

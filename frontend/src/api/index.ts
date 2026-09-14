@@ -112,6 +112,14 @@ export const reportsApi = {
     )
     return data
   },
+  async html(id: number) {
+    const { data } = await http.get<string>(`/api/reports/${id}/html`, { responseType: 'text' })
+    return data
+  },
+  async pdfBlob(id: number) {
+    const { data } = await http.get<Blob>(`/api/reports/${id}/pdf`, { responseType: 'blob' })
+    return data
+  },
 }
 
 export const tokensApi = {
