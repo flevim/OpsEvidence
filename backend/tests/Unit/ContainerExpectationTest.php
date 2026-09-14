@@ -5,10 +5,17 @@ use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceStatus;
 use App\Services\Agent\AgentEvidenceNormalizer;
 
-it('considera esperado un contenedor con política de reinicio', function () {
+it('considera esperado un contenedor con política always', function () {
     expect(ContainerExpectation::isExpected(['name' => 'web', 'restart_policy' => 'always']))->toBeTrue()
-        ->and(ContainerExpectation::isExpected(['name' => 'web', 'restart_policy' => 'unless-stopped']))->toBeTrue()
-        ->and(ContainerExpectation::isExpected(['name' => 'web', 'restart_policy' => 'on-failure']))->toBeTrue();
+        ->and(ContainerExpectation::isExpected(['name' => 'web', 'restart_policy' => 'ALWAYS']))->toBeTrue();
+});
+
+it('no considera esperados los detenidos con unless-stopped u on-failure', function () {
+    // `unless-stopped` significa "reinicia salvo que lo hayan detenido": si está
+    // detenido, alguien lo paró a propósito y no es una incidencia. Compose pone
+    // esa política por defecto, así que contarla llenaba el informe de ruido.
+    expect(ContainerExpectation::isExpected(['name' => 'viejo', 'restart_policy' => 'unless-stopped']))->toBeFalse()
+        ->and(ContainerExpectation::isExpected(['name' => 'tarea', 'restart_policy' => 'on-failure']))->toBeFalse();
 });
 
 it('no considera esperado un contenedor sin política de reinicio', function () {
@@ -41,13 +48,13 @@ it('reconoce running y restarting como en ejecución', function () {
 it('la normalización solo se altera por contenedores esperados', function () {
     $normalizer = app(AgentEvidenceNormalizer::class);
 
-    // 2 corriendo + 3 detenidos a propósito: no es un problema.
+    // 2 con `always` corriendo + 3 detenidos con `unless-stopped`: no es un problema.
     $healthy = $normalizer->normalize(CheckType::DockerContainerStatus, [
         'containers' => [
             ['name' => 'web', 'state' => 'running', 'health' => 'healthy', 'restart_policy' => 'always'],
             ['name' => 'db', 'state' => 'running', 'health' => 'healthy', 'restart_policy' => 'always'],
-            ['name' => 'a', 'state' => 'exited', 'restart_policy' => 'no'],
-            ['name' => 'b', 'state' => 'exited', 'restart_policy' => 'no'],
+            ['name' => 'a', 'state' => 'exited', 'restart_policy' => 'unless-stopped'],
+            ['name' => 'b', 'state' => 'exited', 'restart_policy' => 'unless-stopped'],
             ['name' => 'c', 'state' => 'exited', 'restart_policy' => 'no'],
         ],
     ]);
@@ -55,7 +62,7 @@ it('la normalización solo se altera por contenedores esperados', function () {
     expect($healthy->status)->toBe(EvidenceStatus::Healthy)
         ->and($healthy->title)->toContain('2 en ejecución de 5');
 
-    // Un contenedor esperado detenido sí es crítico.
+    // Un contenedor con `always` detenido sí es crítico.
     $critical = $normalizer->normalize(CheckType::DockerContainerStatus, [
         'containers' => [
             ['name' => 'web', 'state' => 'running', 'health' => 'healthy', 'restart_policy' => 'always'],

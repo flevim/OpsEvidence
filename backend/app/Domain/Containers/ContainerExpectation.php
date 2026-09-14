@@ -16,11 +16,22 @@ namespace App\Domain\Containers;
 class ContainerExpectation
 {
     /**
-     * Politicas de Docker que implican "este contenedor debe seguir vivo".
+     * Política de Docker que implica de verdad "este contenedor debe seguir vivo".
+     *
+     * Solo `always`. La semántica de las demás es la contraria de lo que parece:
+     *
+     *  - `unless-stopped`: reinicia *salvo que lo hayan detenido a propósito*.
+     *    Si está detenido, alguien lo paró: no es una incidencia.
+     *  - `on-failure`: solo reinicia si falló. Estar detenido puede significar
+     *    que terminó bien.
+     *
+     * En el servidor real de prueba, 45 de 48 contenedores tenían política
+     * (Compose pone `unless-stopped` por defecto), así que contar cualquiera de
+     * ellas como "debe estar corriendo" no filtraba nada: 19 falsos positivos.
      *
      * @var array<int, string>
      */
-    private const KEEP_RUNNING_POLICIES = ['always', 'unless-stopped', 'on-failure'];
+    private const KEEP_RUNNING_POLICIES = ['always'];
 
     /**
      * @param  array<string, mixed>  $container
