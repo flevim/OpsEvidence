@@ -32,6 +32,19 @@ PSEUDO_FS = {
     "hugetlbfs",
     "overlay",
     "squashfs",
+    # Comparticiones de VM y contenedor: no son almacenamiento del servidor.
+    # Detectado al probar el agente dentro de un contenedor con un bind mount
+    # de Windows, que aparecia como un disco al 66 %.
+    "9p",
+    "virtiofs",
+    "fuse",
+    "fuseblk",
+    "ramfs",
+    "devfs",
+    "nsfs",
+    "rpc_pipefs",
+    "binfmt_misc",
+    "efivarfs",
 }
 
 MAX_MOUNTS = 12
@@ -101,7 +114,7 @@ def _real_mounts() -> list[dict]:
 
         device, mountpoint, filesystem = fields[0], fields[1], fields[2]
 
-        if filesystem in PSEUDO_FS:
+        if filesystem in PSEUDO_FS or filesystem.startswith("fuse."):
             continue
 
         mounts.append(

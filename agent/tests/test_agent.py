@@ -207,6 +207,50 @@ def test_disks_skips_pseudo(monkeypatch, tmp_path) -> None:
     assert evidence[0]["data"]["mountpoint"] == "/"
 
 
+def test_disks_produces_one_item_per_real_filesystem(monkeypatch, tmp_path) -> None:
+    mounts = tmp_path / "mounts"
+    mounts.write_text(
+        "/dev/sda1 / ext4 rw,relatime 0 0\n"
+        "/dev/sdb1 /var ext4 rw,relatime 0 0\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(disks, "PROC_MOUNTS", str(mounts))
+    monkeypatch.setattr(
+        disks,
+        "_usage",
+        lambda mountpoint: {"total": 100, "used": 50, "free": 50, "used_percent": 50.0},
+    )
+
+    evidence = disks.collect_disks()
+
+    assert [item["data"]["mountpoint"] for item in evidence] == ["/", "/var"]
+
+
+def test_disks_skips_container_and_vm_shares(monkeypatch, tmp_path) -> None:
+    # Un bind mount de Windows aparece como 9p dentro del contenedor y se
+    # reportaba como un disco mas.
+    mounts = tmp_path / "mounts"
+    mounts.write_text(
+        "/dev/sda1 / ext4 rw,relatime 0 0\n"
+        "C:\\134 /src 9p rw,relatime 0 0\n"
+        "hostshare /shared virtiofs rw,relatime 0 0\n"
+        "user@host:/ /mnt/remoto fuse.sshfs rw,relatime 0 0\n"
+        "proc /proc proc rw 0 0\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(disks, "PROC_MOUNTS", str(mounts))
+    monkeypatch.setattr(
+        disks,
+        "_usage",
+        lambda mountpoint: {"total": 100, "used": 90, "free": 10, "used_percent": 90.0},
+    )
+
+    evidence = disks.collect_disks()
+
+    assert len(evidence) == 1
+    assert evidence[0]["data"]["mountpoint"] == "/"
+
+
 def test_docker_produces_two_types(monkeypatch) -> None:
     containers = [{"name": "web", "state": "running", "health": "healthy", "restart_count": 0}]
     monkeypatch.setattr(docker, "_inspect_containers", lambda _: containers)

@@ -19,27 +19,38 @@ sensibles** y sin dar al agente más acceso del necesario.
 
 ## 3. En el servidor
 
+Copia la carpeta `agent/` al servidor (o clónalo desde GitHub) y ejecuta el instalador:
+
 ```bash
-# Crear usuario dedicado
-sudo useradd --system --no-create-home --shell /usr/sbin/nologin opsevidence
+sudo ./install.sh https://ops.tu-dominio.com ops_xxxxxxxx web-server-01
+```
 
-# Instalar el agente
-sudo pip3 install .
-# o desde el repo:
-#   sudo /usr/local/bin/python3 -m venv /opt/opsevidence && ...
+El instalador crea el usuario de sistema, instala el agente en `/opt/opsevidence-agent`
+(aislado del python del sistema, para no chocar con PEP 668 de Debian/Ubuntu modernos),
+escribe `/etc/opsevidence/agent.yml` legible solo por ese usuario, verifica la
+configuración y activa el timer de systemd.
 
-# Enroll (escribe /etc/opsevidence/agent.yml con permisos 0600)
-sudo /usr/local/bin/opsevidence-agent enroll \
-  --endpoint https://ops.tu-dominio.com \
-  --token ops_xxxxxxxx \
-  --asset web-server-01
+Opciones:
 
-# Verificar qué enviaría, sin enviar nada
+```bash
+# Dar acceso al socket de Docker para recolectar contenedores.
+# ATENCIÓN: pertenecer al grupo docker equivale a root sobre el host.
+sudo WITH_DOCKER=1 ./install.sh https://ops.tu-dominio.com ops_xxxxxxxx container-host-01
+
+# Sin systemd (por ejemplo, si usarás cron)
+sudo WITH_SYSTEMD=0 ./install.sh https://ops.tu-dominio.com ops_xxxxxxxx web-server-01
+```
+
+Antes del primer envío conviene revisar qué mandaría, sin mandar nada:
+
+```bash
 sudo -u opsevidence /usr/local/bin/opsevidence-agent collect --dry-run
-
-# Primer envío real
 sudo -u opsevidence /usr/local/bin/opsevidence-agent collect
 ```
+
+> **Sobre el acceso a Docker.** El agente es de solo lectura, pero leer el socket de
+> Docker otorga en la práctica privilegios equivalentes a root sobre el host. Por eso
+> está desactivado por defecto: si lo activas, hazlo sabiendo lo que implica.
 
 ## 4. Programar
 
