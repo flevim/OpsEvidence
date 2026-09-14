@@ -8,7 +8,7 @@ use App\Services\Evidence\EvidenceNormalizer;
  * cada fuente al catalogo canonico de estados (docs/evidence-model.md).
  */
 beforeEach(function () {
-    $this->normalizer = new EvidenceNormalizer();
+    $this->normalizer = new EvidenceNormalizer;
 });
 
 it('clasifica códigos de estado HTTP', function () {

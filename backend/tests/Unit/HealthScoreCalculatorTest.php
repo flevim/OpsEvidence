@@ -3,7 +3,7 @@
 use App\Services\Reporting\HealthScoreCalculator;
 
 beforeEach(function () {
-    $this->calculator = new HealthScoreCalculator();
+    $this->calculator = new HealthScoreCalculator;
 });
 
 it('no devuelve ningún score cuando no hay datos de monitorización', function () {
