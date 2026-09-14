@@ -1,27 +1,45 @@
 version: 2
+
+# Los majors de npm/composer/pip se ignoran a proposito: el stack esta fijado
+# deliberadamente (Vue 3, Vuetify 3, Vite 6, TypeScript 5, PHP 8.4). Un bump
+# mayor propuesto automaticamente romperia el build y contradiria esa decision.
+# Las acciones de GitHub se dejan libres: sus majors suelen ser seguros y
+# necesarios (por ejemplo, la migracion fuera de Node 20).
 updates:
   - package-ecosystem: composer
     directory: /backend
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: /frontend
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: pip
     directory: /agent
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /docker/php
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "php"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
