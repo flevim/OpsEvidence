@@ -73,7 +73,7 @@ async function generate(): Promise<void> {
     const report = await reportsApi.generate(form.value.client_id!, form.value.period_start, form.value.period_end)
     dialog.value = false
     await load()
-    window.open(reportUrl(report.id), '_blank', 'noopener')
+    await openReport(report)
   } catch (exception) {
     error.value = errorMessage(exception)
   } finally {
