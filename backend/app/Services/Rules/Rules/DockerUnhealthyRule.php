@@ -2,6 +2,7 @@
 
 namespace App\Services\Rules\Rules;
 
+use App\Domain\Containers\ContainerExpectation;
 use App\Domain\Enums\CheckType;
 use App\Domain\Enums\IncidentSeverity;
 use App\Domain\Enums\RuleKey;
@@ -10,7 +11,9 @@ use App\Services\Rules\RuleContext;
 use App\Services\Rules\RuleViolation;
 
 /**
- * Contenedores en ejecución cuyo healthcheck de Docker reporta "unhealthy".
+ * Contenedores esperados que están corriendo pero con el healthcheck en
+ * "unhealthy". Un contenedor detenido a propósito con un health antiguo no
+ * cuenta.
  */
 class DockerUnhealthyRule implements Rule
 {
@@ -25,8 +28,22 @@ class DockerUnhealthyRule implements Rule
 
         foreach ($types as $type) {
             foreach ($context->evidenceOfType($type) as $evidence) {
+                $explicitExpected = is_array($evidence->data['expected'] ?? null) ? $evidence->data['expected'] : [];
+
                 foreach ($evidence->data['containers'] ?? [] as $container) {
+                    if (! is_array($container)) {
+                        continue;
+                    }
+
                     if (mb_strtolower((string) ($container['health'] ?? '')) !== 'unhealthy') {
+                        continue;
+                    }
+
+                    if (! ContainerExpectation::isExpected($container, $explicitExpected)) {
+                        continue;
+                    }
+
+                    if (! ContainerExpectation::isRunning($container)) {
                         continue;
                     }
 

@@ -269,6 +269,7 @@ def test_docker_summarize() -> None:
             "State": {"Status": "running", "Health": {"Status": "healthy"}},
             "RestartCount": 3,
             "Config": {"Image": "nginx:latest"},
+            "HostConfig": {"RestartPolicy": {"Name": "unless-stopped"}},
         },
     )
 
@@ -278,6 +279,17 @@ def test_docker_summarize() -> None:
     assert result["name"] == "web"
     assert result["health"] == "healthy"
     assert result["restart_count"] == 3
+    assert result["restart_policy"] == "unless-stopped"
+
+
+def test_docker_summarize_defaults_restart_policy_to_no() -> None:
+    # Sin HostConfig, el contenedor no se considera "debe estar corriendo".
+    line = json.dumps({"Name": "/one-shot", "State": {"Status": "exited"}, "Config": {"Image": "alpine"}})
+
+    result = docker._summarize(line)
+
+    assert result is not None
+    assert result["restart_policy"] == "no"
 
 
 def test_apt_updates(monkeypatch) -> None:

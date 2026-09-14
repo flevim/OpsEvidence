@@ -88,6 +88,8 @@ def _summarize(line: str) -> dict | None:
     state: dict[str, Any] = raw.get("State") or {}
     config: dict[str, Any] = raw.get("Config") or {}
     health: dict[str, Any] = state.get("Health") or {}
+    host_config: dict[str, Any] = raw.get("HostConfig") or {}
+    restart_policy: dict[str, Any] = host_config.get("RestartPolicy") or {}
 
     name = raw.get("Name", "").lstrip("/")
 
@@ -99,5 +101,8 @@ def _summarize(line: str) -> dict | None:
         "status": state.get("Status", ""),
         "health": health.get("Status") or "none",
         "restart_count": int(raw.get("RestartCount") or 0),
+        # El servidor decide con esto si el contenedor "deberia" estar corriendo.
+        # Sin este dato, todo contenedor detenido a proposito parecia una caida.
+        "restart_policy": restart_policy.get("Name") or "no",
         "started_at": state.get("StartedAt", ""),
     }

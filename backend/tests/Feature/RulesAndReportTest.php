@@ -148,6 +148,73 @@ it('avisa cuando la recolección de un check lleva fallando', function () {
         ->and($incident->description)->toContain('Connection timed out');
 });
 
+it('no marca como caído un contenedor detenido a propósito', function () {
+    $account = Account::factory()->create();
+    $client = Client::factory()->forAccount($account)->create();
+    $asset = makeAsset($client, AssetType::ContainerHost);
+
+    makeEvidence($asset, CheckType::DockerContainerStatus, EvidenceStatus::Healthy, [
+        'data' => [
+            'containers' => [
+                ['name' => 'web', 'state' => 'running', 'health' => 'healthy', 'restart_policy' => 'always'],
+                ['name' => 'migracion', 'state' => 'exited', 'health' => 'none', 'restart_policy' => 'no'],
+                ['name' => 'despliegue-viejo', 'state' => 'exited', 'health' => 'none', 'restart_policy' => 'no'],
+            ],
+        ],
+    ]);
+
+    ['violations' => $violations] = evaluateAndSync($client);
+
+    expect($violations)->toBeEmpty();
+});
+
+it('sí marca un contenedor esperado que está detenido, con sus reinicios', function () {
+    $account = Account::factory()->create();
+    $client = Client::factory()->forAccount($account)->create();
+    $asset = makeAsset($client, AssetType::ContainerHost);
+
+    makeEvidence($asset, CheckType::DockerContainerStatus, EvidenceStatus::Critical, [
+        'data' => [
+            'containers' => [
+                ['name' => 'web', 'state' => 'running', 'health' => 'healthy', 'restart_policy' => 'always'],
+                ['name' => 'api-persona-por-rut', 'state' => 'exited', 'health' => 'none', 'restart_policy' => 'always', 'restart_count' => 25407],
+            ],
+        ],
+    ]);
+
+    ['violations' => $violations] = evaluateAndSync($client);
+
+    expect($violations)->not->toBeEmpty()
+        ->and($violations[0]->rule)->toBe(RuleKey::ContainerDown)
+        ->and($violations[0]->title)->toContain('api-persona-por-rut')
+        ->and($violations[0]->description)->toContain('25407');
+});
+
+it('respeta la lista explícita de contenedores esperados del check', function () {
+    $account = Account::factory()->create();
+    $client = Client::factory()->forAccount($account)->create();
+    $asset = makeAsset($client, AssetType::ContainerHost);
+
+    $check = makeCheck($asset, CheckType::DockerContainerStatus, [
+        'configuration' => ['expected' => ['backup-nocturno']],
+    ]);
+
+    makeEvidence($asset, CheckType::DockerContainerStatus, EvidenceStatus::Critical, [
+        'check_id' => $check->id,
+        'data' => [
+            'expected' => ['backup-nocturno'],
+            'containers' => [
+                ['name' => 'backup-nocturno', 'state' => 'exited', 'restart_policy' => 'no', 'restart_count' => 2],
+            ],
+        ],
+    ]);
+
+    ['violations' => $violations] = evaluateAndSync($client);
+
+    expect($violations)->not->toBeEmpty()
+        ->and($violations[0]->rule)->toBe(RuleKey::ContainerDown);
+});
+
 it('permite desactivar una regla por cuenta', function () {
     $account = Account::factory()->create();
     $client = Client::factory()->forAccount($account)->create();

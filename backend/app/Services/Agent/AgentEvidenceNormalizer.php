@@ -2,6 +2,7 @@
 
 namespace App\Services\Agent;
 
+use App\Domain\Containers\ContainerExpectation;
 use App\Domain\Enums\CheckType;
 use App\Domain\Enums\EvidenceSource;
 use App\Domain\Enums\EvidenceStatus;
@@ -34,6 +35,17 @@ class AgentEvidenceNormalizer
         ?string $title = null,
         ?CarbonImmutable $collectedAt = null,
     ): EvidencePayload {
+        // La lista de contenedores esperados vive en la configuracion del check.
+        // Se copia al dato para que el estado y las reglas la lean sin depender
+        // del check.
+        if (in_array($type, [CheckType::DockerContainerStatus, CheckType::DockerHealth], true)) {
+            $expected = $check?->configuration['expected'] ?? null;
+
+            if (is_array($expected) && $expected !== []) {
+                $data['expected'] = array_values($expected);
+            }
+        }
+
         [$status, $autoTitle, $value, $unit] = $this->classify($type, $data, $check);
 
         return EvidencePayload::make(
@@ -155,23 +167,36 @@ class AgentEvidenceNormalizer
     private function docker(CheckType $type, array $data): array
     {
         $containers = is_array($data['containers'] ?? null) ? $data['containers'] : [];
+        $explicitExpected = is_array($data['expected'] ?? null) ? $data['expected'] : [];
 
         $running = 0;
-        $stopped = 0;
+
+        foreach ($containers as $container) {
+            if (is_array($container) && ContainerExpectation::isRunning($container)) {
+                $running++;
+            }
+        }
+
+        // Solo se evaluan los contenedores que DEBERIAN estar corriendo. Los
+        // detenidos a proposito no son un problema (ver ContainerExpectation).
+        $expectedContainers = ContainerExpectation::expected(
+            array_values(array_filter($containers, 'is_array')),
+            $explicitExpected,
+        );
+
+        $stoppedExpected = 0;
         $unhealthy = 0;
         $starting = 0;
 
-        foreach ($containers as $container) {
-            $state = mb_strtolower((string) ($container['state'] ?? ''));
+        foreach ($expectedContainers as $container) {
+            $isRunning = ContainerExpectation::isRunning($container);
             $health = mb_strtolower((string) ($container['health'] ?? ''));
 
-            if ($state === 'running') {
-                $running++;
-            } else {
-                $stopped++;
+            if (! $isRunning) {
+                $stoppedExpected++;
             }
 
-            if ($health === 'unhealthy') {
+            if ($isRunning && $health === 'unhealthy') {
                 $unhealthy++;
             } elseif ($health === 'starting') {
                 $starting++;
@@ -179,17 +204,18 @@ class AgentEvidenceNormalizer
         }
 
         $status = match (true) {
-            $unhealthy > 0, $stopped > 0 => EvidenceStatus::Critical,
-            $starting > 0 => EvidenceStatus::Warning,
             $containers === [] => EvidenceStatus::Unknown,
+            $unhealthy > 0, $stoppedExpected > 0 => EvidenceStatus::Critical,
+            $starting > 0 => EvidenceStatus::Warning,
             default => EvidenceStatus::Healthy,
         };
 
         $label = $type === CheckType::DockerHealth ? 'Salud de contenedores' : 'Contenedores';
+        $detail = $stoppedExpected > 0 ? ", {$stoppedExpected} de ellos esperados y detenidos" : '';
 
         return [
             $status,
-            sprintf('%s: %d en ejecución de %d', $label, $running, count($containers)),
+            sprintf('%s: %d en ejecución de %d%s', $label, $running, count($containers), $detail),
             (float) $running,
             'count',
         ];
