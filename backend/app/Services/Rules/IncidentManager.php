@@ -3,6 +3,7 @@
 namespace App\Services\Rules;
 
 use App\Domain\Enums\IncidentStatus;
+use App\Jobs\SendIncidentAlertJob;
 use App\Models\Incident;
 use App\Support\AccountContext;
 use Carbon\CarbonImmutable;
@@ -74,7 +75,7 @@ class IncidentManager
         $now = CarbonImmutable::now();
 
         try {
-            DB::table('incidents')->insert([
+            $incidentId = DB::table('incidents')->insertGetId([
                 'account_id' => $accountId,
                 'client_id' => $clientId,
                 'asset_id' => $violation->assetId,
@@ -95,6 +96,11 @@ class IncidentManager
             // parcial hizo su trabajo.
             return false;
         }
+
+        // Aviso inmediato al equipo. El informe mensual cuenta lo que pasó; la
+        // alerta evita que pase: sin ella, un disco al 95 % espera a que alguien
+        // entre al panel por casualidad.
+        SendIncidentAlertJob::dispatch($incidentId);
 
         return true;
     }
