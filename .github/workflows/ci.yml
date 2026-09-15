@@ -125,6 +125,39 @@ jobs:
       - name: Build
         run: npm run build
 
+  e2e:
+    name: Smoke E2E (Compose + Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Instalar dependencias del navegador
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+
+      - name: Levantar el MVP completo
+        run: docker compose up -d --build --wait
+
+      - name: Smoke test
+        working-directory: frontend
+        run: npm run test:e2e
+
+      - name: Logs de los servicios (solo si algo falló)
+        if: failure()
+        run: docker compose logs --tail 200
+
+      - name: Limpiar Compose
+        if: always()
+        run: docker compose down -v
+
   agent:
     name: Agent (ruff + pytest)
     runs-on: ubuntu-latest

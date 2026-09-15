@@ -40,6 +40,22 @@ Credenciales de demostración (se siembran al primer arranque):
 owner@opsevidence.test / password
 ```
 
+## Qué puedes probar hoy
+
+- Panel general con estado, incidentes y clientes.
+- Alta de clientes, activos y comprobaciones.
+- Ambientes de producción, staging, desarrollo u otros dentro de cada cliente.
+- Gestión de usuarios, roles y accesos desde **Usuarios**.
+- Ejecución de checks, recepción de evidencia y seguimiento de problemas.
+- Generación, vista, PDF y envío de informes mensuales.
+- Tokens de agente desde **Ajustes** y correo de prueba en Mailpit: http://localhost:8025.
+
+Para llevar la prueba a un VPS con dominio y HTTPS, sigue
+[Despliegue de piloto privado](docs/pilot-deployment.md).
+
+Si todavía no tienes dominio, la misma guía incluye el modo LAN para probar desde
+`http://192.168.1.13:5180` sin exponer el servicio a Internet.
+
 ## Stack
 
 - **Backend:** Laravel 13 (API REST + Sanctum + colas Redis) · PostgreSQL 16.
@@ -81,6 +97,9 @@ docker compose exec backend vendor/bin/phpstan analyse
 docker compose exec frontend npm run lint
 docker compose exec frontend npm run typecheck
 docker compose exec frontend npm run test
+
+# Smoke E2E (requiere Chromium de Playwright y el Compose levantado)
+cd frontend && npm run test:e2e
 
 # Agente
 cd agent && .venv/bin/python -m pytest -q && .venv/bin/python -m ruff check .

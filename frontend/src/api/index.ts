@@ -7,6 +7,7 @@ import type {
   Client,
   Dashboard,
   Evidence,
+  Environment,
   Incident,
   Paginated,
   Report,
@@ -60,6 +61,42 @@ export const clientsApi = {
   async assets(clientId: number) {
     const { data } = await http.get<Paginated<Asset>>(`/api/clients/${clientId}/assets`)
     return data
+  },
+}
+
+export const environmentsApi = {
+  async list(clientId: number) {
+    const { data } = await http.get<{ data: Environment[] }>(`/api/clients/${clientId}/environments`)
+    return data.data
+  },
+  async create(clientId: number, payload: Pick<Environment, 'name' | 'type'>) {
+    const { data } = await http.post<{ data: Environment }>(`/api/clients/${clientId}/environments`, payload)
+    return data.data
+  },
+  async update(id: number, payload: Partial<Pick<Environment, 'name' | 'type'>>) {
+    const { data } = await http.patch<{ data: Environment }>(`/api/environments/${id}`, payload)
+    return data.data
+  },
+  async remove(id: number) {
+    await http.delete(`/api/environments/${id}`)
+  },
+}
+
+export const usersApi = {
+  async list() {
+    const { data } = await http.get<{ data: User[] }>('/api/users')
+    return data.data
+  },
+  async create(payload: { name: string; email: string; password: string; role: User['role'] }) {
+    const { data } = await http.post<{ data: User }>('/api/users', payload)
+    return data.data
+  },
+  async update(id: number, payload: Partial<Pick<User, 'name' | 'email' | 'role' | 'is_active'>> & { password?: string }) {
+    const { data } = await http.patch<{ data: User }>(`/api/users/${id}`, payload)
+    return data.data
+  },
+  async remove(id: number) {
+    await http.delete(`/api/users/${id}`)
   },
 }
 

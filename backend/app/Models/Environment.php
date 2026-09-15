@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $client_id
+ * @property string $name
+ * @property EnvironmentType $type
+ */
 class Environment extends Model
 {
     /** @use HasFactory<EnvironmentFactory> */

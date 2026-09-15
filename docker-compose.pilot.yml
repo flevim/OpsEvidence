@@ -1,0 +1,139 @@
+name: opsevidence-pilot
+
+x-backend: &backend
+  image: opsevidence/backend:pilot
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile.pilot
+  env_file:
+    - ${PILOT_ENV_FILE:-.env.pilot}
+  volumes:
+    - backend_storage:/var/www/html/storage
+  networks:
+    - opsevidence
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Configura POSTGRES_DB en .env.pilot}
+      POSTGRES_USER: ${POSTGRES_USER:?Configura POSTGRES_USER en .env.pilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configura POSTGRES_PASSWORD en .env.pilot}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - opsevidence
+
+  redis:
+    image: redis:7-alpine
+    command: ["sh", "-c", "exec redis-server --appendonly yes --save 60 1 --requirepass \"$${REDIS_PASSWORD}\""]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Configura REDIS_PASSWORD en .env.pilot}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    networks:
+      - opsevidence
+
+  init:
+    <<: *backend
+    command: ["opsevidence-pilot-init"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    <<: *backend
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  worker:
+    <<: *backend
+    command: ["php", "artisan", "queue:work", "--tries=3", "--backoff=30", "--max-time=3600", "--sleep=3", "--queue=default,checks,rules,alerts"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  scheduler:
+    <<: *backend
+    command: ["php", "artisan", "schedule:work", "--verbose"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  frontend:
+    image: opsevidence/frontend:pilot
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile.pilot
+      args:
+        VITE_API_URL: ""
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - opsevidence
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["https"]
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - opsevidence
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_storage:
+  caddy_data:
+  caddy_config:
+
+networks:
+  opsevidence:
+    driver: bridge

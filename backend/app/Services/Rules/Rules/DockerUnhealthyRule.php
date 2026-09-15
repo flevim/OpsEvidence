@@ -28,9 +28,18 @@ class DockerUnhealthyRule implements Rule
 
         foreach ($types as $type) {
             foreach ($context->evidenceOfType($type) as $evidence) {
-                $explicitExpected = is_array($evidence->data['expected'] ?? null) ? $evidence->data['expected'] : [];
+                $containers = data_get($evidence->data, 'containers');
+                $explicitExpected = data_get($evidence->data, 'expected');
 
-                foreach ($evidence->data['containers'] ?? [] as $container) {
+                if (! is_array($containers)) {
+                    continue;
+                }
+
+                if (! is_array($explicitExpected)) {
+                    $explicitExpected = [];
+                }
+
+                foreach ($containers as $container) {
                     if (! is_array($container)) {
                         continue;
                     }

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\IntegrationController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RuleSettingController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 | un 404.
 */
 
-foreach (['client', 'asset', 'check', 'incident', 'report', 'activity', 'integration', 'api_token', 'environment', 'ruleSetting'] as $parameter) {
+foreach (['client', 'asset', 'check', 'incident', 'report', 'activity', 'integration', 'api_token', 'environment', 'ruleSetting', 'user'] as $parameter) {
     Route::pattern($parameter, '[0-9]+');
 }
 
@@ -79,6 +80,8 @@ Route::post('/webhooks/backup/{token}', [BackupWebhookController::class, 'store'
 
 Route::middleware(['auth:sanctum', 'account.context', 'tenant.ownership', 'throttle:api'])->group(function (): void {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::apiResource('users', UserController::class)->except(['show']);
 
     Route::apiResource('clients', ClientController::class);
     Route::get('clients/{client}/summary', ClientSummaryController::class)->name('clients.summary');

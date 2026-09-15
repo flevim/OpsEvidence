@@ -8,7 +8,16 @@ use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property ReportStatus $status
+ * @property Carbon $period_start
+ * @property Carbon $period_end
+ * @property Carbon|null $sent_at
+ * @property-read Client $client
+ * @property-read Account $account
+ */
 class Report extends Model
 {
     /** @use HasFactory<ReportFactory> */

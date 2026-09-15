@@ -1,0 +1,17 @@
+.git
+.github
+.env
+.env.pilot
+.env.lan
+backups
+backend/.env
+backend/vendor
+backend/node_modules
+backend/storage/logs
+frontend/node_modules
+frontend/dist
+frontend/playwright-report
+frontend/test-results
+agent/.venv
+**/__pycache__
+**/.pytest_cache

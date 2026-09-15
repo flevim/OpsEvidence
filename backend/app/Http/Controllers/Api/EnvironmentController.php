@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Domain\Enums\EnvironmentType;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EnvironmentResource;
 use App\Models\Client;
 use App\Models\Environment;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,9 @@ class EnvironmentController extends Controller
         $this->authorize('view', $client);
 
         return response()->json([
-            'data' => $client->environments()->orderBy('name')->get(),
+            'data' => EnvironmentResource::collection(
+                $client->environments()->withCount('assets')->orderBy('name')->get(),
+            ),
         ]);
     }
 
@@ -32,7 +35,9 @@ class EnvironmentController extends Controller
 
         $environment = $client->environments()->create($data);
 
-        return response()->json($environment, 201);
+        return (new EnvironmentResource($environment->loadCount('assets')))
+            ->response()
+            ->setStatusCode(201);
     }
 
     public function update(Request $request, Environment $environment): JsonResponse
@@ -49,7 +54,7 @@ class EnvironmentController extends Controller
 
         $environment->update($data);
 
-        return response()->json($environment->fresh());
+        return (new EnvironmentResource($environment->fresh()->loadCount('assets')))->response();
     }
 
     public function destroy(Environment $environment): JsonResponse

@@ -9,13 +9,16 @@ const auth = useAuthStore()
 const router = useRouter()
 const theme = useTheme()
 
-const items = [
+const items = computed(() => [
   { title: 'Panel', icon: 'mdi-view-dashboard-outline', to: '/' },
   { title: 'Clientes', icon: 'mdi-domain', to: '/clients' },
   { title: 'Problemas', icon: 'mdi-alert-outline', to: '/issues' },
   { title: 'Informes', icon: 'mdi-file-document-outline', to: '/reports' },
+  ...(auth.user?.role === 'owner' || auth.user?.role === 'admin'
+    ? [{ title: 'Usuarios', icon: 'mdi-account-group-outline', to: '/users' }]
+    : []),
   { title: 'Ajustes', icon: 'mdi-cog-outline', to: '/settings' },
-]
+])
 
 const isDark = computed(() => theme.global.name.value === 'dark')
 

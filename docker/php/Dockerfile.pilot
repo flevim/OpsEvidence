@@ -1,0 +1,59 @@
+FROM php:8.4-fpm-alpine AS php-base
+
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_HOME=/tmp/composer \
+    TZ=UTC
+
+RUN apk add --no-cache \
+        bash \
+        curl \
+        libonig-dev \
+        libxml2-dev \
+        libzip-dev \
+        postgresql-dev \
+        tzdata \
+        unzip \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        dom \
+        mbstring \
+        opcache \
+        pcntl \
+        pdo_pgsql \
+        zip \
+    && rm -rf /var/cache/apk/* /tmp/pear
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
+FROM php-base AS build
+
+WORKDIR /var/www/html
+
+COPY backend/composer.json backend/composer.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --no-progress --no-scripts
+
+COPY backend/ ./
+RUN composer dump-autoload --no-dev --optimize --classmap-authoritative --no-interaction \
+    && php artisan package:discover --ansi
+
+FROM php-base AS runtime
+
+RUN apk add --no-cache nginx supervisor
+
+COPY docker/php/conf.d/prod.ini /usr/local/etc/php/conf.d/zz-opsevidence.ini
+COPY docker/php/pilot/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/php/pilot/supervisord.conf /etc/supervisord.conf
+COPY docker/php/pilot/init.sh /usr/local/bin/opsevidence-pilot-init
+COPY --from=build /var/www/html /var/www/html
+
+RUN chmod +x /usr/local/bin/opsevidence-pilot-init \
+    && mkdir -p /run/nginx /var/www/html/storage/framework/cache/data \
+        /var/www/html/storage/framework/sessions /var/www/html/storage/framework/views \
+        /var/www/html/storage/logs /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+WORKDIR /var/www/html
+
+EXPOSE 8080
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

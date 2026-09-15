@@ -1,6 +1,6 @@
 # OpsEvidence — Backlog
 
-> Última actualización: 2026-09-10 (Fase 1).
+> Última actualización: 2026-09-15 (Sprint 2 de administración).
 > Regla: cualquier idea que no sea imprescindible para el MVP **se anota aquí y no se implementa**.
 
 Leyenda de estados: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho · `[!]` bloqueado
@@ -10,22 +10,22 @@ Leyenda de estados: `[ ]` pendiente · `[~]` en progreso · `[x]` hecho · `[!]`
 ## MVP
 
 - [x] Fase 0 — Producto, arquitectura, modelo de datos, evidencia, seguridad, ADRs
-- [ ] Fase 1 — Fundación: Laravel + Vue 3 + PostgreSQL + Redis + Compose + auth + healthchecks
-- [ ] Fase 2 — Accounts, usuarios, roles, clientes, aislamiento de tenants + tests
-- [ ] Fase 3 — Environments y assets (CRUD + API + UI)
-- [ ] Fase 4 — Evidence engine: checks, check_runs, evidence, normalización
-- [ ] Fase 5 — Collectors HTTP + SSL con scheduling
-- [ ] Fase 6 — Rules engine: WEBSITE_DOWN, SSL_EXPIRING, BACKUP_FAILED, BACKUP_STALE, DISK_USAGE, CONTAINER_DOWN
-- [ ] Fase 7 — Linux agent (CLI Python): OS, uptime, CPU, RAM, disco
-- [ ] Fase 8 — Docker en el agente: containers, health, restart count, image
-- [ ] Fase 9 — Webhook de backup + API tokens de agente
-- [ ] Fase 10 — Dashboard general y dashboard por cliente
-- [ ] Fase 11 — Incidentes: acknowledge, resolve, ignore
-- [ ] Fase 12 — Reporte mensual HTML imprimible
-- [ ] Fase 13 — Actividades del técnico incluidas en el informe
-- [ ] Fase 14 — GitHub Actions: último workflow, estado, deploy
-- [ ] Fase 15 — Security hardening + SECURITY.md
-- [ ] Fase 16 — CI con GitHub Actions (lint, tests, seguridad, build)
+- [x] Fase 1 — Fundación: Laravel + Vue 3 + PostgreSQL + Redis + Compose + auth + healthchecks
+- [x] Fase 2 — Accounts, roles, clientes, aislamiento y gestión de usuarios
+- [x] Fase 3 — Assets y environments con API/UI
+- [x] Fase 4 — Evidence engine: checks, check_runs, evidence, normalización
+- [x] Fase 5 — Collectors HTTP + SSL con scheduling
+- [x] Fase 6 — Rules engine: WEBSITE_DOWN, SSL_EXPIRING, BACKUP_FAILED, BACKUP_STALE, DISK_USAGE, CONTAINER_DOWN
+- [x] Fase 7 — Linux agent (CLI Python): OS, uptime, CPU, RAM, disco
+- [x] Fase 8 — Docker en el agente: containers, health, restart count, image
+- [x] Fase 9 — Webhook de backup + API tokens de agente
+- [x] Fase 10 — Dashboard general y dashboard por cliente
+- [x] Fase 11 — Incidentes: acknowledge, resolve, ignore
+- [x] Fase 12 — Reporte mensual HTML imprimible
+- [~] Fase 13 — Actividades incluidas en API/informe; registro desde el panel pendiente
+- [~] Fase 14 — Collector de GitHub listo; configuración desde el panel pendiente
+- [~] Fase 15 — Security hardening + SECURITY.md
+- [x] Fase 16 — CI con GitHub Actions (lint, tests, seguridad, build y smoke E2E)
 
 ### Criterios de aceptación del MVP
 
@@ -33,9 +33,38 @@ Ver §53 del brief: los 25 puntos de la Definition of Done.
 
 ---
 
+## SPRINT 1 — ESTABILIZACIÓN
+
+- [x] Corregir CORS del arranque rápido en `localhost:5180`
+- [x] Recuperar PHPStan y retirar supresiones obsoletas del baseline
+- [x] Bloquear SSRF en HTTP/SSL, incluidas redirecciones hacia redes privadas
+- [x] Añadir smoke E2E: login → panel → clientes → informes
+- [x] Actualizar backlog y comandos de verificación
+
+## SPRINT 2 — ADMINISTRACIÓN
+
+- [x] API de gestión de usuarios aislada por cuenta
+- [x] Alta, edición, activación, desactivación y eliminación de usuarios desde el panel
+- [x] Protección del último propietario y restricción de asignación del rol `owner`
+- [x] Revocación de sesiones al desactivar o eliminar usuarios
+- [x] Gestión visual de environments por cliente
+- [x] Asignación de ambiente al crear activos
+- [x] Cobertura feature y ampliación del smoke E2E
+
+## PILOTO PRIVADO
+
+- [x] Compose de piloto con frontend compilado, nginx/PHP-FPM, Caddy y HTTPS
+- [x] PostgreSQL y Redis sin puertos públicos, con Redis autenticado
+- [x] Inicialización sin datos demo y comando para crear el primer propietario
+- [x] Backup comprimido y guía de restauración
+- [ ] Desplegar en VPS real (requiere dominio/IP y acceso SSH)
+- [ ] Configurar SMTP real y backup fuera del VPS
+
 ## IN PROGRESS
 
-- [~] Fase 1 — Fundación
+- [~] Fase 13 — Registro visual de actividades
+- [~] Fase 14 — Configuración visual de GitHub
+- [~] Fase 15 — Completar hardening y pruebas de seguridad pendientes
 
 ---
 
@@ -78,9 +107,9 @@ Seguridad planificada y aún no implementada (el listado de lo implementado est�
 Ordenadas por valor esperado, no por dificultad.
 
 ### Reportes y entrega
-- [ ] Exportación a PDF del informe
-- [ ] Programación mensual automática del informe
-- [ ] Envío por email (con el informe adjunto) al cliente final
+- [x] Exportación a PDF del informe
+- [x] Programación mensual automática del informe
+- [x] Envío por email (con el informe adjunto) al cliente final
 - [ ] Plantilla de informe personalizable (logo y colores del MSP) — white label
 - [ ] Marca blanca completa (dominio propio)
 - [ ] Reporte de SLA con cumplimiento de disponibilidad contractual
@@ -116,7 +145,7 @@ Ordenadas por valor esperado, no por dificultad.
 - [ ] Scoring de seguridad y gestión de vulnerabilidades
 - [ ] Evidencia de cumplimiento (ANCI / ISO 27001 readiness)
 - [ ] Audit log visible en la UI
-- [ ] Alertas por email y webhook saliente
+- [~] Alertas por email implementadas; webhook saliente pendiente
 - [ ] Línea base automática y detección de anomalías simples (sin IA)
 - [x] Onboarding guiado: checklist de "qué falta conectar" por cliente, derivada del estado real (9 pasos)
 - [ ] Medición del tiempo de armado del informe (instrumentación de la hipótesis)

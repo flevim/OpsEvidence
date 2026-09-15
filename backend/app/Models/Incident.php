@@ -12,6 +12,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property IncidentSeverity $severity
+ * @property-read Client $client
+ * @property-read Asset|null $asset
+ */
 class Incident extends Model
 {
     /** @use HasFactory<IncidentFactory> */

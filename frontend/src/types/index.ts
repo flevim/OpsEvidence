@@ -27,7 +27,21 @@ export interface User {
   role_label: string
   is_active: boolean
   last_login_at: string | null
+  created_at?: string
   account?: Account
+}
+
+export type EnvironmentType = 'production' | 'staging' | 'development' | 'other'
+
+export interface Environment {
+  id: number
+  client_id: number
+  name: string
+  type: EnvironmentType
+  type_label: string
+  tone: string
+  assets_count: number
+  created_at: string
 }
 
 export interface Client {
@@ -54,6 +68,7 @@ export interface Asset {
   active: boolean
   last_evidence_at: string | null
   checks_count?: number
+  environment?: Pick<Environment, 'id' | 'name' | 'type'> | null
 }
 
 export interface Check {
@@ -220,6 +235,20 @@ export const ASSET_TYPE_LABELS: Record<AssetType, string> = {
   REPOSITORY: 'Repositorio',
   BACKUP_SOURCE: 'Origen de backup',
   OTHER: 'Otro',
+}
+
+export const ENVIRONMENT_TYPE_LABELS: Record<EnvironmentType, string> = {
+  production: 'Producción',
+  staging: 'Staging',
+  development: 'Desarrollo',
+  other: 'Otro',
+}
+
+export const USER_ROLE_LABELS: Record<UserRole, string> = {
+  owner: 'Propietario',
+  admin: 'Administrador',
+  technician: 'Técnico',
+  viewer: 'Solo lectura',
 }
 
 export const SEVERITY_LABELS: Record<IncidentSeverity, string> = {

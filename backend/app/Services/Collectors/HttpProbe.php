@@ -2,6 +2,9 @@
 
 namespace App\Services\Collectors;
 
+use App\Services\Collectors\Exceptions\CollectionFailed;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -35,6 +38,8 @@ final readonly class HttpProbeResult
  */
 class HttpProbe
 {
+    public function __construct(private readonly OutboundUrlGuard $urlGuard) {}
+
     /**
      * @param  array<string, mixed>  $options
      */
@@ -46,24 +51,22 @@ class HttpProbe
         $startedAt = microtime(true);
 
         try {
-            /** @var Response $response */
-            $response = Http::withHeaders([
-                'User-Agent' => config('opsevidence.collectors.http.user_agent'),
-                'Accept' => '*/*',
-            ])
-                ->withOptions($options)
-                ->timeout($timeout)
-                ->connectTimeout($connectTimeout)
-                ->withOptions(['allow_redirects' => ['max' => (int) config('opsevidence.collectors.http.max_redirects')]])
-                ->get($url);
+            [$response, $finalUrl] = $this->requestFollowingSafeRedirects(
+                $url,
+                $options,
+                $timeout,
+                $connectTimeout,
+            );
 
             return new HttpProbeResult(
                 reachable: true,
                 statusCode: $response->status(),
                 totalTimeMs: round((microtime(true) - $startedAt) * 1000, 2),
                 headers: $response->headers(),
-                finalUrl: $url,
+                finalUrl: $finalUrl,
             );
+        } catch (CollectionFailed $e) {
+            throw $e;
         } catch (ConnectionException $e) {
             return new HttpProbeResult(
                 reachable: false,
@@ -79,6 +82,49 @@ class HttpProbe
                 error: $this->summarize($e->getMessage()),
             );
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array{0: Response, 1: string}
+     */
+    private function requestFollowingSafeRedirects(
+        string $url,
+        array $options,
+        int $timeout,
+        int $connectTimeout,
+    ): array {
+        $currentUrl = $url;
+        $maxRedirects = (int) config('opsevidence.collectors.http.max_redirects');
+
+        for ($redirects = 0; $redirects <= $maxRedirects; $redirects++) {
+            $this->urlGuard->assertAllowed($currentUrl);
+
+            /** @var Response $response */
+            $response = Http::withHeaders([
+                'User-Agent' => config('opsevidence.collectors.http.user_agent'),
+                'Accept' => '*/*',
+            ])
+                ->withOptions($options)
+                ->withOptions(['allow_redirects' => false])
+                ->timeout($timeout)
+                ->connectTimeout($connectTimeout)
+                ->get($currentUrl);
+
+            $location = $response->header('Location');
+
+            if (! $response->redirect() || blank($location)) {
+                return [$response, $currentUrl];
+            }
+
+            if ($redirects === $maxRedirects) {
+                throw new CollectionFailed("El check superó el máximo de {$maxRedirects} redirecciones.");
+            }
+
+            $currentUrl = (string) UriResolver::resolve(new Uri($currentUrl), new Uri($location));
+        }
+
+        throw new CollectionFailed('No se pudo completar la redirección del check.');
     }
 
     private function summarize(string $message): string

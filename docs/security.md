@@ -131,7 +131,8 @@ rotables, con `last_used_at` visible en la UI. **Nunca se registran en logs.**
 - Límites de tamaño de payload en el endpoint de agente/webhooks.
 - Validación de tipos de asset y check contra constantes de dominio.
 - URLs de checks HTTP: se rechazan esquemas distintos de `http`/`https` y direcciones que apunten a
-  la red interna del propio OpsEvidence (prevención de SSRF básica).
+  loopback, redes privadas o rangos reservados. Cada destino de una redirección se vuelve a resolver
+  y validar antes de realizar la siguiente petición.
 
 ### 5.7 Cabeceras y transporte
 

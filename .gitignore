@@ -18,6 +18,11 @@ backend/public/build
 backend/build/
 frontend/dist
 frontend/.vite
+frontend/playwright-report/
+frontend/test-results/
+.env.pilot
+.env.lan
+backups/
 *.tsbuildinfo
 .phpunit.result.cache
 .phpunit.cache/

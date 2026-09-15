@@ -20,6 +20,7 @@ class SslCheckCollector implements Collector
 {
     public function __construct(
         private readonly EvidenceNormalizer $normalizer,
+        private readonly OutboundUrlGuard $urlGuard,
     ) {}
 
     public function supports(): array
@@ -189,6 +190,8 @@ class SslCheckCollector implements Collector
         if (! preg_match('#^https?://#i', $url)) {
             $url = 'https://'.$url;
         }
+
+        $this->urlGuard->assertAllowed($url);
 
         $host = parse_url($url, PHP_URL_HOST);
 

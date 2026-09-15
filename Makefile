@@ -1,9 +1,10 @@
 COMPOSE ?= docker compose
+PILOT_COMPOSE ?= docker compose --env-file .env.pilot -f docker-compose.pilot.yml
 BACKEND ?= $(COMPOSE) exec -T backend
 AGENT_DIR ?= agent
 
 .DEFAULT_GOAL := help
-.PHONY: help up down restart build ps logs logs-worker install migrate seed fresh test test-backend test-agent lint lint-fix typecheck backend-shell frontend-shell db-shell redis-shell tinker queue-restart report clean agent-install check
+.PHONY: help up down restart build ps logs logs-worker install migrate seed fresh test test-backend test-agent lint lint-fix typecheck backend-shell frontend-shell db-shell redis-shell tinker queue-restart report clean agent-install check pilot-config pilot-build pilot-up pilot-logs pilot-backup
 
 help: ## Muestra esta ayuda
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -65,6 +66,21 @@ typecheck: ## Analisis estatico
 	$(BACKEND) ./vendor/bin/phpstan analyse --no-progress
 
 check: lint test ## Lint + tests
+
+pilot-config: ## Valida la configuración del piloto
+	$(PILOT_COMPOSE) config --quiet
+
+pilot-build: ## Construye las imágenes del piloto
+	$(PILOT_COMPOSE) build
+
+pilot-up: ## Levanta el piloto con HTTPS
+	$(PILOT_COMPOSE) --profile https up -d --build --wait
+
+pilot-logs: ## Sigue los logs del piloto
+	$(PILOT_COMPOSE) logs -f --tail=100
+
+pilot-backup: ## Crea un backup comprimido del piloto
+	./scripts/backup-pilot.sh
 
 backend-shell: ## Shell dentro del contenedor backend
 	$(COMPOSE) exec backend sh

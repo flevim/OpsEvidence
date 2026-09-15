@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property string $name
+ * @property string $slug
+ * @property string|null $contact_email
+ */
 class Client extends Model
 {
     /** @use HasFactory<ClientFactory> */

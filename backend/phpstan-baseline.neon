@@ -133,12 +133,6 @@ parameters:
 			path: app/Http/Controllers/Api/IntegrationController.php
 
 		-
-			message: '#^Cannot call method toDateString\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Controllers/Api/ReportController.php
-
-		-
 			message: '#^Cannot access property \$value on string\.$#'
 			identifier: property.nonObject
 			count: 2
@@ -155,18 +149,6 @@ parameters:
 			identifier: method.nonObject
 			count: 1
 			path: app/Http/Resources/AccountResource.php
-
-		-
-			message: '#^Cannot access property \$value on string\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: app/Http/Resources/UserResource.php
-
-		-
-			message: '#^Cannot call method label\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Http/Resources/UserResource.php
 
 		-
 			message: '#^Cannot call method toIso8601String\(\) on string\.$#'
@@ -289,12 +271,6 @@ parameters:
 			path: app/Models/Integration.php
 
 		-
-			message: '#^Cannot call method format\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: app/Models/Report.php
-
-		-
 			message: '#^PHPDoc tag @use has invalid type Database\\Factories\\ReportFactory\.$#'
 			identifier: class.notFound
 			count: 1
@@ -317,30 +293,6 @@ parameters:
 			identifier: generics.notSubtype
 			count: 1
 			path: app/Models/RuleSetting.php
-
-		-
-			message: '#^Cannot call method level\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Cannot call method canManageTokens\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Policies/ApiTokenPolicy.php
-
-		-
-			message: '#^Cannot call method canManageUsers\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 3
-			path: app/Policies/UserPolicy.php
-
-		-
-			message: '#^Cannot call method canManageUsers\(\) on string\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: app/Providers/AppServiceProvider.php
 
 		-
 			message: '#^Dead catch \- Throwable is never thrown in the try block\.$#'
@@ -423,13 +375,13 @@ parameters:
 		-
 			message: '#^Cannot access property \$value on string\.$#'
 			identifier: property.nonObject
-			count: 5
+			count: 4
 			path: app/Services/Dashboard/DashboardService.php
 
 		-
 			message: '#^Cannot call method label\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 3
 			path: app/Services/Dashboard/DashboardService.php
 
 		-
@@ -441,7 +393,7 @@ parameters:
 		-
 			message: '#^Cannot call method weight\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 3
+			count: 2
 			path: app/Services/Dashboard/DashboardService.php
 
 		-
@@ -453,13 +405,13 @@ parameters:
 		-
 			message: '#^Cannot access property \$value on string\.$#'
 			identifier: property.nonObject
-			count: 6
+			count: 4
 			path: app/Services/Reporting/ReportBuilder.php
 
 		-
 			message: '#^Cannot call method label\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 4
+			count: 3
 			path: app/Services/Reporting/ReportBuilder.php
 
 		-
@@ -493,12 +445,6 @@ parameters:
 			path: app/Services/Rules/IncidentManager.php
 
 		-
-			message: '#^Property App\\Models\\Incident\:\:\$severity \(string\) does not accept App\\Domain\\Enums\\IncidentSeverity\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Services/Rules/IncidentManager.php
-
-		-
 			message: '#^Property App\\Models\\Incident\:\:\$status \(string\) does not accept App\\Domain\\Enums\\IncidentStatus\:\:Open\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -523,46 +469,10 @@ parameters:
 			path: app/Services/Rules/Rules/CollectorFailingRule.php
 
 		-
-			message: '#^Empty array passed to foreach\.$#'
-			identifier: foreach.emptyArray
-			count: 1
-			path: app/Services/Rules/Rules/ContainerDownRule.php
-
-		-
-			message: '#^Offset ''name'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/Rules/Rules/ContainerDownRule.php
-
-		-
-			message: '#^Offset ''state'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/Rules/Rules/ContainerDownRule.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/Rules/Rules/ContainerDownRule.php
-
-		-
-			message: '#^Empty array passed to foreach\.$#'
-			identifier: foreach.emptyArray
-			count: 1
-			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
-
-		-
-			message: '#^Offset ''health'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
-
-		-
-			message: '#^Offset ''name'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Services/Rules/Rules/DockerUnhealthyRule.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'

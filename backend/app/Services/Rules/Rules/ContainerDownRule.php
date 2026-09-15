@@ -31,8 +31,16 @@ class ContainerDownRule implements Rule
     public function evaluate(RuleContext $context): ?RuleViolation
     {
         foreach ($context->evidenceOfType(CheckType::DockerContainerStatus) as $evidence) {
-            $containers = $evidence->data['containers'] ?? [];
-            $explicitExpected = is_array($evidence->data['expected'] ?? null) ? $evidence->data['expected'] : [];
+            $containers = data_get($evidence->data, 'containers');
+            $explicitExpected = data_get($evidence->data, 'expected');
+
+            if (! is_array($containers)) {
+                continue;
+            }
+
+            if (! is_array($explicitExpected)) {
+                $explicitExpected = [];
+            }
 
             foreach ($containers as $container) {
                 if (! is_array($container)) {

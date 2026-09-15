@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { assetsApi, checkTypesApi, checksApi, clientsApi } from '@/api'
+import { assetsApi, checkTypesApi, checksApi, clientsApi, environmentsApi } from '@/api'
 import { errorMessage } from '@/api/http'
 import StatusBadge from '@/components/StatusBadge.vue'
+import { useAuthStore } from '@/stores/auth'
 import type {
   Asset,
   AssetType,
   Check,
   CheckTypeOption,
   Evidence,
+  Environment,
+  EnvironmentType,
   Onboarding,
   OnboardingStep,
 } from '@/types'
-import { ASSET_TYPE_LABELS } from '@/types'
+import { ASSET_TYPE_LABELS, ENVIRONMENT_TYPE_LABELS } from '@/types'
 
 const props = defineProps<{ id: string }>()
 
 const clientId = Number(props.id)
+const auth = useAuthStore()
 const summary = ref<Record<string, unknown> | null>(null)
 const assets = ref<Asset[]>([])
+const environments = ref<Environment[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const feedback = ref<string | null>(null)
@@ -37,12 +42,20 @@ const checkTypes = ref<CheckTypeOption[]>([])
 
 const assetDialog = ref(false)
 const savingAsset = ref(false)
-const assetForm = ref<{ name: string; type: AssetType; hostname: string; address: string }>({
+const assetForm = ref<{ name: string; type: AssetType; environment_id: number | null; hostname: string; address: string }>({
   name: '',
   type: 'SERVER',
+  environment_id: null,
   hostname: '',
   address: '',
 })
+
+const environmentDialog = ref(false)
+const deleteEnvironmentDialog = ref(false)
+const savingEnvironment = ref(false)
+const selectedEnvironment = ref<Environment | null>(null)
+const pendingEnvironmentDelete = ref<Environment | null>(null)
+const environmentForm = ref({ name: '', type: 'production' as EnvironmentType })
 
 const checksDialog = ref(false)
 const checksAsset = ref<Asset | null>(null)
@@ -51,6 +64,9 @@ const savingCheck = ref(false)
 const checkForm = ref({ type: '', name: '', url: '' })
 
 const assetTypeOptions = Object.entries(ASSET_TYPE_LABELS).map(([value, title]) => ({ value, title }))
+const environmentTypeOptions = Object.entries(ENVIRONMENT_TYPE_LABELS).map(([value, title]) => ({ value, title }))
+const canWrite = computed(() => auth.user?.role !== 'viewer')
+const canDelete = computed(() => auth.user?.role === 'owner' || auth.user?.role === 'admin')
 
 const availableCheckTypes = computed<CheckTypeOption[]>(() => {
   const assetType = checksAsset.value?.type
@@ -68,13 +84,15 @@ const needsUrl = computed<boolean>(() =>
 
 async function load(): Promise<void> {
   try {
-    const [summaryData, assetsData] = await Promise.all([
+    const [summaryData, assetsData, environmentsData] = await Promise.all([
       clientsApi.summary(clientId),
       clientsApi.assets(clientId),
+      environmentsApi.list(clientId),
     ])
 
     summary.value = summaryData
     assets.value = assetsData.data
+    environments.value = environmentsData
   } catch (exception) {
     error.value = errorMessage(exception)
   } finally {
@@ -97,12 +115,62 @@ async function createAsset(): Promise<void> {
   try {
     await assetsApi.create(clientId, { ...assetForm.value })
     assetDialog.value = false
-    assetForm.value = { name: '', type: 'SERVER', hostname: '', address: '' }
+    assetForm.value = { name: '', type: 'SERVER', environment_id: null, hostname: '', address: '' }
     await load()
   } catch (exception) {
     error.value = errorMessage(exception)
   } finally {
     savingAsset.value = false
+  }
+}
+
+function openEnvironment(environment: Environment | null = null): void {
+  selectedEnvironment.value = environment
+  environmentForm.value = environment
+    ? { name: environment.name, type: environment.type }
+    : { name: '', type: 'production' }
+  environmentDialog.value = true
+}
+
+async function saveEnvironment(): Promise<void> {
+  savingEnvironment.value = true
+  error.value = null
+  try {
+    if (selectedEnvironment.value) {
+      await environmentsApi.update(selectedEnvironment.value.id, environmentForm.value)
+      feedback.value = 'Ambiente actualizado.'
+    } else {
+      await environmentsApi.create(clientId, environmentForm.value)
+      feedback.value = 'Ambiente creado.'
+    }
+    environmentDialog.value = false
+    await load()
+  } catch (exception) {
+    error.value = errorMessage(exception)
+  } finally {
+    savingEnvironment.value = false
+  }
+}
+
+function askDeleteEnvironment(environment: Environment): void {
+  pendingEnvironmentDelete.value = environment
+  deleteEnvironmentDialog.value = true
+}
+
+async function deleteEnvironment(): Promise<void> {
+  if (!pendingEnvironmentDelete.value) return
+  savingEnvironment.value = true
+  error.value = null
+  try {
+    await environmentsApi.remove(pendingEnvironmentDelete.value.id)
+    deleteEnvironmentDialog.value = false
+    pendingEnvironmentDelete.value = null
+    feedback.value = 'Ambiente eliminado; sus activos quedaron sin ambiente asignado.'
+    await load()
+  } catch (exception) {
+    error.value = errorMessage(exception)
+  } finally {
+    savingEnvironment.value = false
   }
 }
 
@@ -290,9 +358,39 @@ onMounted(async () => {
       </v-alert>
 
       <div class="d-flex align-center mt-8 mb-2">
+        <div>
+          <h2 class="text-subtitle-1 font-weight-bold mb-0">Ambientes</h2>
+          <div class="text-caption text-medium-emphasis">Separa producción, staging y desarrollo.</div>
+        </div>
+        <v-spacer />
+        <v-btn v-if="canWrite" size="small" color="primary" prepend-icon="mdi-plus" @click="openEnvironment()">
+          Agregar ambiente
+        </v-btn>
+      </div>
+
+      <v-card v-if="environments.length === 0" class="pa-6 text-medium-emphasis">
+        Este cliente todavía no tiene ambientes definidos.
+      </v-card>
+
+      <v-table v-else density="comfortable">
+        <thead><tr><th>Ambiente</th><th>Tipo</th><th>Activos</th><th /></tr></thead>
+        <tbody>
+          <tr v-for="environment in environments" :key="environment.id">
+            <td class="font-weight-medium">{{ environment.name }}</td>
+            <td><v-chip :color="environment.tone" size="small" variant="tonal" label>{{ environment.type_label }}</v-chip></td>
+            <td>{{ environment.assets_count }}</td>
+            <td class="text-right">
+              <v-btn v-if="canWrite" size="small" variant="text" @click="openEnvironment(environment)">Editar</v-btn>
+              <v-btn v-if="canDelete" size="small" variant="text" color="error" @click="askDeleteEnvironment(environment)">Eliminar</v-btn>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+
+      <div class="d-flex align-center mt-8 mb-2">
         <h2 class="text-subtitle-1 font-weight-bold mb-0">Activos</h2>
         <v-spacer />
-        <v-btn size="small" color="primary" prepend-icon="mdi-plus" @click="assetDialog = true">
+        <v-btn v-if="canWrite" size="small" color="primary" prepend-icon="mdi-plus" @click="assetDialog = true">
           Agregar activo
         </v-btn>
       </div>
@@ -306,6 +404,7 @@ onMounted(async () => {
           <tr>
             <th>Activo</th>
             <th>Tipo</th>
+            <th>Ambiente</th>
             <th>Host / dirección</th>
             <th>Checks</th>
             <th>Última evidencia</th>
@@ -316,6 +415,7 @@ onMounted(async () => {
           <tr v-for="asset in assets" :key="asset.id">
             <td class="font-weight-medium">{{ asset.name }}</td>
             <td>{{ ASSET_TYPE_LABELS[asset.type] }}</td>
+            <td class="text-caption">{{ asset.environment?.name ?? 'Sin asignar' }}</td>
             <td class="text-caption">{{ asset.hostname ?? asset.address ?? '—' }}</td>
             <td>{{ asset.checks_count ?? 0 }}</td>
             <td class="text-caption">
@@ -359,6 +459,25 @@ onMounted(async () => {
       </v-table>
     </template>
 
+    <v-dialog v-model="environmentDialog" max-width="520">
+      <v-card class="pa-4">
+        <v-card-title>{{ selectedEnvironment ? 'Editar ambiente' : 'Agregar ambiente' }}</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="environmentForm.name" label="Nombre" placeholder="Producción Chile" required />
+          <v-select v-model="environmentForm.type" :items="environmentTypeOptions" item-title="title" item-value="value" label="Tipo" />
+        </v-card-text>
+        <v-card-actions><v-spacer /><v-btn variant="text" @click="environmentDialog = false">Cancelar</v-btn><v-btn color="primary" :disabled="!environmentForm.name" :loading="savingEnvironment" @click="saveEnvironment">Guardar</v-btn></v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteEnvironmentDialog" max-width="480">
+      <v-card class="pa-4">
+        <v-card-title>Eliminar ambiente</v-card-title>
+        <v-card-text>Los {{ pendingEnvironmentDelete?.assets_count ?? 0 }} activo(s) asociados quedarán sin ambiente, pero no se eliminarán.</v-card-text>
+        <v-card-actions><v-spacer /><v-btn variant="text" @click="deleteEnvironmentDialog = false">Cancelar</v-btn><v-btn color="error" :loading="savingEnvironment" @click="deleteEnvironment">Eliminar</v-btn></v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="assetDialog" max-width="560">
       <v-card class="pa-4">
         <v-card-title>Agregar activo</v-card-title>
@@ -371,6 +490,14 @@ onMounted(async () => {
             item-title="title"
             item-value="value"
             label="Tipo"
+          />
+          <v-select
+            v-model="assetForm.environment_id"
+            :items="environments"
+            item-title="name"
+            item-value="id"
+            label="Ambiente (opcional)"
+            clearable
           />
           <v-text-field v-model="assetForm.hostname" label="Hostname (opcional)" />
           <v-text-field
